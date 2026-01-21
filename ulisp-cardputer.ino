@@ -16,8 +16,8 @@ const char LispLibrary[] = "";
 #define sdcardsupport
 #define gfxsupport
 // #define lisplibrary
-// #define extensions
-// #define largerfont
+#define extensions
+#define largerfont
 
 // Includes
 
