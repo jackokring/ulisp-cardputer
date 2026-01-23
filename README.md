@@ -29,25 +29,35 @@ The free **RAM** is 99404 Bytes (**31%** free) or about **22 k of lisp symbols**
 
 ## Things I Might Do (Not Everything, but Alot with Simple Function Choices)
 
-* Interface UI Builder - make apps easier to make using GFX toolkit, perhaps some PROGMEM graphics images.
+[ ] Interface UI Builder - make apps easier to make using GFX toolkit, perhaps some PROGMEM graphics images.
  * For example 5 buttons on a row at 42*9 box, 6 tiny chars with 2 pix border padding. 2 pix button horizontal outer padding
    and 5 pix horizontal gap extra (4 of these gaps).
-* Improve Edit Experience - colors, cursor, help dialog.
-* Keyboard - swap `()` and `[]` as lisp, maybe add some uses for `<backtick>`, `ctrl`, `àlt`, `òpt`and `fn`.
+[ ] Improve Edit Experience - colors, cursor, help dialog.
+[X] Keyboard - swap `()` and `[]` as lisp. Also `\` with `|` for archane CS reasons and CTRL "causing" a SHFT for `^\` (not synthetic `ÈSC`).
+[ ] Maybe add some uses for `<backtick>`, `ctrl`, `àlt`, `òpt`and `fn`.
  * SI/SO, etc. Better done in keyboard handler?
-* `trace` - automatic limit of 3, as I assume this optimizes the C++ to limit RAM usage from a "locals" stack.
-* `directory` - the card is 8 GB. Is `cd`reasonable?
-* Color Keywords - improving mental parsing, and real pretty printing.
-* Bignums - from negative integer, subtract larger for possible error. BUG FIX.
-* Bluetooth - maybe. Audio.
-* Key Input -  maybe a non-blocking keyboard read.
-* Sound - expand for more flexibility.
-* Numbers - a few more number theoretic functions.
-* Calculus - a few more calculus functions.
-* Solver - some kind of variable solver.
-* Streams - maybe there's more. Audio.
-* Other Types - for rational and complex. Choice of natural R or P representation.
+[ ] `trace` - automatic limit of 3, as I assume this optimizes the C++ to limit RAM usage from a "locals" stack.
+[ ] `directory` - the card is 8 GB. Is `cd`reasonable?
+[ ] Color Keywords - improving mental parsing, and real pretty printing.
+[ ] Bignums - from negative integer, subtract larger for possible error. BUG FIX.
+[ ] Bluetooth - maybe. Audio.
+[ ] Key Input -  maybe a non-blocking keyboard read.
+[ ] Sound - expand for more flexibility.
+[ ] Numbers - a few more number theoretic functions.
+[ ] Calculus - a few more calculus functions.
+[ ] Solver - some kind of variable solver.
+[ ] Streams - maybe there's more. Audio.
+[ ] Other Types - for rational and complex. Choice of natural R or P representation.
 
 ## Other M5Carputer Projects
 
 This list will expand as I place nice things I like.
+
+* MiniAcid - ooh yes, tweeking for the ear.
+* M5Launcher - a nice fine app as occasionally used!
+* M5-Keyboard-Mouse - press that GO for keys or mouse. USB and Bluetooth.
+* IR-Remote - apparently it does the lot.
+* M5Mp3 - a gimmick, but 100 mp3 to play from SD.
+* Wifi-Scan - clean show me the SSIDs.
+* Porkchop - very entertaining.
+* MicroHydra - yes, I'm using a Cardputer 1 for keys, but MicroPython.
