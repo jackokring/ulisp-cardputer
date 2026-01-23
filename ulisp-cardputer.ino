@@ -6547,7 +6547,7 @@ void ScrollDisplay () {
     }
   }
   // Tidy up graphics
-  if (Leading == 10) { // Clear gaps between lines
+  if (Leading == 9) { // Clear gaps between lines
     for (uint8_t y = 0; y < Lines-1; y++) tft.fillRect(0, y*Leading+8, ScreenWidth, Leading-8, BLACK);
   }
   for (int x=0; x<Columns; x++) ScrollBuf[x][Scroll] = 0;
