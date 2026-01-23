@@ -4,6 +4,7 @@ A version of uLisp to convert the M5Stack Cardputer into a self-contained handhe
 * **ulisp-cardputer.ino** - the uLisp source file, to be compiled and uploaded using the Arduino IDE.
 * **Bignums.ino** - big numbers as a types. The **$** prefix is used on all functions.
 * All the "M5Cardputer.h" dependancies with maybe some edits for uLisp.
+* **data** - SPIFFS files (keep it under 1 MB).
 
 You must add the `M̀5GFX` and `M5Unified` libraries to the Arduino project to satify all dependancies. As usual, the
 `Sketch > Export compiled Binary` option places the binary in the project directory for use with M5Launcher.
