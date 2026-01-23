@@ -127,13 +127,14 @@ object *bignum_add (object *bignum1, object *bignum2) {
   return cdr(result);
 }
 
+int borrow;
 /*
   bignum_sub - Performs bignum1 = bignum1 - bignum2.
 */
  object *bignum_sub (object *bignum1, object *bignum2) {
   object *result = cons(NULL, NULL);
   object *ptr = result;
-  int borrow = 0;
+  borrow = 0;
   while (!(bignum1 == NULL && bignum2 == NULL)) {
     uint64_t tmp1, tmp2, res;
     if (bignum1 != NULL) {
@@ -262,7 +263,9 @@ object *do_operator (object *bignum1, object *bignum2, uint32_t (*op)(uint32_t, 
 */
 object *fn_Sbignum (object *args, object *env) {
   (void) env;
-  return int_to_bignum(checkinteger(first(args)));
+  uint32_t i = checkinteger(first(args));
+  if(i > 0x7FFFFFFF) error2(PSTR("integer negative when converting to bignum"));
+  return int_to_bignum(i);
 }
 
 /*
@@ -383,7 +386,8 @@ object *fn_Sadd (object *args, object *env) {
 */
 object *fn_Ssub (object *args, object *env) {
   (void) env;
-  return bignum_sub(checkbignum(first(args)), checkbignum(second(args)));
+  auto result = bignum_sub(checkbignum(first(args)), checkbignum(second(args)));
+  if(borrow) error2(PSTR("negative result subtracting bignums"));
 }
 
 /*

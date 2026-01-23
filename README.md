@@ -39,7 +39,7 @@ The free **RAM** is 99404 Bytes (**31%** free) or about **22 k of lisp symbols**
 [ ] `trace` - automatic limit of 3, as I assume this optimizes the C++ to limit RAM usage from a "locals" stack.
 [ ] `directory` - the card is 8 GB. Is `cd`reasonable?
 [ ] Color Keywords - improving mental parsing, and real pretty printing.
-[ ] Bignums - from negative integer, subtract larger for possible error. BUG FIX.
+[X] Bignums - from negative integer, subtract larger for possible error. BUG FIX.
 [ ] Bluetooth - maybe. Audio.
 [ ] Key Input -  maybe a non-blocking keyboard read.
 [ ] Sound - expand for more flexibility.
