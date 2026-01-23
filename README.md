@@ -24,8 +24,8 @@ The free **RAM** is 99404 Bytes (**31%** free) or about **22 k of lisp symbols**
 
 ## Expansions (Implementation Options)
 
-* **C Extension** in the binary program memory.
-* **uLisp Extension** in the binary program memory **AND** also **uses up RAM** for lisp symbols.
+* **C Extension** in the binary program memory. Chain on something to **Bignums.ino** just like it does in turn.
+* **uLisp Extension** in the binary program memory **AND** also **uses up RAM** for lisp symbols. Added a **LispLibrary.h** file.
 
 ## Things I Might Do (Not Everything, but Alot with Simple Function Choices)
 

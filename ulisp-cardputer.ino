@@ -5,7 +5,7 @@
 */
 
 // Lisp Library
-const char LispLibrary[] = "";
+// const char LispLibrary[] PROGMEM = "";
 
 // Compile options
 
@@ -15,13 +15,13 @@ const char LispLibrary[] = "";
 // #define printgcs
 #define sdcardsupport
 #define gfxsupport
-// #define lisplibrary
+#define lisplibrary
 #define extensions
-#define largerfont
+// #define largerfont
 
 // Includes
 
-// #include "LispLibrary.h"
+#include "LispLibrary.h"
 #include <setjmp.h>
 #include <SPI.h>
 #include <Wire.h>
