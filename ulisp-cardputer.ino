@@ -45,7 +45,7 @@
 #define BUFFERSIZE 36  // Number of bits+4
 
 #if defined(CONFIG_IDF_TARGET_ESP32S3)
-  #define WORKSPACESIZE 22250          /* Cells (8*bytes) */
+  #define WORKSPACESIZE 23250          /* Cells (8*bytes) */
   #define MAX_STACK 6500
   #define tft M5Cardputer.Display
   #define COLOR_WHITE WHITE
@@ -2300,10 +2300,10 @@ object *edit (object *fun) {
     // more cardputer
     if (tstflag(EXITEDITOR)) return fun;
     char c = gserial();
-    if (c == '') setflag(EXITEDITOR);
+    if (c == 0x60) setflag(EXITEDITOR); // Summarian escape
     else if (c == ';') return fun;
     else if (c == ' ') fun = read(gserial);
-    // TODO: Tally printing to not scroll off, font size and  ... autorefresh
+    // TODO: `Tally printing to not scroll off, font size and  ... autorefresh
     else if (c == '\n') { pfl(pserial); superprint(fun, 0, false, pserial); pln(pserial); }
     else if (c == '.') fun = cons(read(gserial), fun);
     else if (atom(fun)) pserial('!');
@@ -6498,11 +6498,12 @@ const int ScreenWidth = 240, ScreenHeight = 135;
 #if defined(largerfont) // 8x16 font
 const int Leading = 15, CharWidth = 8;
 #else
-const int Leading = 10, CharWidth = 6;
+// tight pixels 6 by 8 font
+const int Leading = 9, CharWidth = 6;
 #endif
 const int Columns = ScreenWidth/CharWidth;
 const int TextWidth = Columns*CharWidth;
-const int Lines = ScreenHeight/Leading;
+const int Lines = ScreenHeight/Leading;// 15
 const int LastColumn = Columns-1;
 const int LastLine = Lines-1;
 const char Cursor = 0x5f;
@@ -6568,13 +6569,13 @@ void Display (char c) {
   static bool invert = false;
   // These characters don't affect the cursor
   if (c == 8) {                    // Backspace
-    if (column == 0) {
+    if (column == 0 && line != 0) {
       line--; column = LastColumn;
     } else column--;
     return;
   }
   if (c == 9) {                    // Cursor forward
-    if (column == LastColumn) {
+    if (column == LastColumn && line != LastLine) {
       line++; column = 0;
     } else column++;
     return;
@@ -6591,7 +6592,7 @@ void Display (char c) {
   // Hide cursor
   PlotChar(' ', line, column);
   if (c == 0x7F) {                 // DEL
-    if (column == 0) {
+    if (column == 0 && line != 0) {
       line--; column = LastColumn;
     } else column--;
   } else if ((c & 0x7f) >= 32) {   // Normal character
@@ -6611,8 +6612,10 @@ void Display (char c) {
   } else if (c == '\n') {          // Newline
     column = 0;
     if (line == LastLine) ScrollDisplay(); else line++;
+  } else if (c == '\r') {          // Return 
+    column = 0;
   } else if (c == VT) {
-    column = 0; Scroll = 0; line = LastLine - 2;
+    if (line != LastLine) line++;
   } else if (c == BEEP) tone(0, 440, 125); // Beep
   // Show cursor
   PlotChar(Cursor, line, column);
@@ -6623,7 +6626,8 @@ void Display (char c) {
 
 char decodeKey () {
   Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
-  for (auto i : status.word) { if (status.fn && i == '`') return 27; else return i; }
+  // Cardputer lisp keys chosen
+  for (auto i : status.word) { if (status.ctrl) return i - 64; else return i; }
   if (status.enter && status.shift) return 26; // For echo last line
   if (status.enter) return '\n';
   if (status.del) return 8;
