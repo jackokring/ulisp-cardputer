@@ -6627,7 +6627,14 @@ void Display (char c) {
 char decodeKey () {
   Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
   // Cardputer lisp keys chosen
-  for (auto i : status.word) { if (status.ctrl) return i - 64; else return i; }
+  for (auto i : status.word) {
+    status.shift = !status.shift;
+    if(i == '[') i = '('; else if(i == ']') i = ')';
+    else if(i == '(') i = '['; else if(i == ')') i = ']';
+    else if(i == '|') i = '\\'; else if(i == '\\') i = '|';
+    else status.shift = !status.shift;//restore when not specially lisped
+    if (status.ctrl) return i - 64; else return i;
+  }
   if (status.enter && status.shift) return 26; // For echo last line
   if (status.enter) return '\n';
   if (status.del) return 8;
