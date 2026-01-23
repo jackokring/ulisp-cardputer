@@ -51,8 +51,8 @@
   #define COLOR_WHITE WHITE
   #define COLOR_BLACK BLACK
   #define LED_BUILTIN 44
-  #define LITTLEFS
-  #include <LittleFS.h>
+  // #define LITTLEFS
+  // #include <LittleFS.h>
 #else
 #error "Board not supported!"
 #endif
@@ -127,6 +127,7 @@ typedef struct sobject {
       sobject *cdr;
     };
     struct {
+      // bits and alignments
       unsigned int type;
       union {
         symbol_t name;
