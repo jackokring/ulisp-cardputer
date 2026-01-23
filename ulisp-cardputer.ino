@@ -2297,17 +2297,19 @@ void superprint (object *form, int lm, bool match, pfun_t pfun) {
 
 object *edit (object *fun) {
   while (1) {
+    // more cardputer
     if (tstflag(EXITEDITOR)) return fun;
     char c = gserial();
-    if (c == 'q') setflag(EXITEDITOR);
-    else if (c == 'b') return fun;
-    else if (c == 'r') fun = read(gserial);
+    if (c == '') setflag(EXITEDITOR);
+    else if (c == ';') return fun;
+    else if (c == ' ') fun = read(gserial);
+    // TODO: Tally printing to not scroll off, font size and  ... autorefresh
     else if (c == '\n') { pfl(pserial); superprint(fun, 0, false, pserial); pln(pserial); }
-    else if (c == 'c') fun = cons(read(gserial), fun);
+    else if (c == '.') fun = cons(read(gserial), fun);
     else if (atom(fun)) pserial('!');
-    else if (c == 'd') fun = cons(car(fun), edit(cdr(fun)));
-    else if (c == 'a') fun = cons(edit(car(fun)), cdr(fun));
-    else if (c == 'x') fun = cdr(fun);
+    else if (c == '/') fun = cons(car(fun), edit(cdr(fun)));
+    else if (c == ',') fun = cons(edit(car(fun)), cdr(fun));
+    else if (c == '\b') fun = cdr(fun);
     else pserial('?');
   }
 }
