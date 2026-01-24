@@ -6730,25 +6730,40 @@ void ProcessKey (char c) {
       if (WritePtr) c = KybdBuf[WritePtr-1];
     }
   } else if (c == SHIFTRETURN) {
+    // BUG: when entering ( then delete it, then shift+enter, initial bracket from prvious is invisible?
+    // as set in buffer as 0x7f
     for (int i = 0; i < LastWritePtr; i++) Display(KybdBuf[i]);
     WritePtr = LastWritePtr;
   } else if (WritePtr < KybdBufSize) {
-    if (c == '"') string = !string;
+    if (c == '"') {
+      string = !string;
+      if (WritePtr > 0 && KybdBuf[WritePtr] == '\\') string = !string;//correct string escape #\"
+    }
     KybdBuf[WritePtr++] = c;
     Display(c);
   }
   // Do new parenthesis highlight
-  // BUG: when entering ( then delete it, then shift+enter, initial bracket from prvious is invisible?
   if (c == ')' && !string) {
     int search = WritePtr-1, level = 0; bool string2 = false;
     while (search >= 0 && parenthesis == 0) {
       c = KybdBuf[search--];
-      if (c == '"') string2 = !string2;// "\"" ??
-      if (c == ')' && !string2) level++;
-      if (c == '(' && !string2) {
-        level--;
-        if (level == 0) parenthesis = WritePtr-search-1;
+      if (c == '"') {
+         string2 = !string2;// "\"" ??
+         if(search > 0 && KybdBuf[search] == '\\') {
+            string2 = !string2;//correct string escape #\"
+            search--;
+         }
       }
+      // #\( and #\)
+      if (!string2)
+        if (search > 1 && KybdBuf[search - 1] != '#')
+          if (search > 0 && KybdBuf[search - 1] != '\\') {
+            if (c == ')' && !string2) level++;
+            if (c == '(' && !string2) {
+              level--;
+              if (level == 0) parenthesis = WritePtr-search-1;
+            }
+          }
     }
     Highlight(parenthesis, 1);
   }
