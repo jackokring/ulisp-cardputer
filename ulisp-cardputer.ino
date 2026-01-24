@@ -2700,6 +2700,7 @@ object *sp_withi2c (object *args, object *env) {
   return result;
 }
 
+// is SPI used for SD card with settings as is?
 object *sp_withspi (object *args, object *env) {
   object *params = checkarguments(args, 2, 6);
   object *var = first(params);
@@ -6737,11 +6738,12 @@ void ProcessKey (char c) {
     Display(c);
   }
   // Do new parenthesis highlight
+  // BUG: when entering ( then delete it, then shift+enter, initial bracket from prvious is invisible?
   if (c == ')' && !string) {
     int search = WritePtr-1, level = 0; bool string2 = false;
     while (search >= 0 && parenthesis == 0) {
       c = KybdBuf[search--];
-      if (c == '"') string2 = !string2;
+      if (c == '"') string2 = !string2;// "\"" ??
       if (c == ')' && !string2) level++;
       if (c == '(' && !string2) {
         level--;
@@ -7045,6 +7047,7 @@ void setup () {
 void repl (object *env) {
   for (;;) {
     randomSeed(micros());
+    pserial(15);// restore prompt output
     #if defined(printfreespace)
     if (!tstflag(NOECHO)) gc(NULL, env);
     pint(Freespace+1, pserial);
