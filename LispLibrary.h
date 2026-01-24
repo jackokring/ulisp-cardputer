@@ -55,7 +55,9 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
 
 (defun load-file (filename)
   (with-sd-card (s filename)
-    (loop (if (eval (read s)) () (return)))))
+    (loop (let ((r (read s)))
+      (unless r (return))  
+      (eval r)))))
 (defun save-file (filename)
   (with-sd-card (s filename 2)
     (pprintall s)))
