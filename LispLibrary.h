@@ -52,7 +52,11 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
      (setq y ($g ($g y)))
      (setq d ($gcd (if ($> x y) ($- x y) ($- y x)) n)))
     (if ($= d n) nil d)))
-(defun load (filename)
+
+(defun load-file (filename)
   (with-sd-card (s filename)
-    (eval (read s))))
+    (loop (if (eval (read s)) () (return)))))
+(defun save-file (filename)
+  (with-sd-card (s filename 2)
+    (pprintall s)))
 )lisplibrary";
