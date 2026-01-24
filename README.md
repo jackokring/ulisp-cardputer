@@ -29,24 +29,24 @@ The free **RAM** is 99404 Bytes (**31%** free) or about **22 k of lisp symbols**
 
 ## Things I Might Do (Not Everything, but Alot with Simple Function Choices)
 
- [ ] Interface UI Builder - make apps easier to make using GFX toolkit, perhaps some PROGMEM graphics images.
-  * For example 5 buttons on a row at 42*9 box, 6 tiny chars with 2 pix border padding. 2 pix button horizontal outer padding
+- [ ] Interface UI Builder - make apps easier to make using GFX toolkit, perhaps some PROGMEM graphics images.
+ - For example 5 buttons on a row at 42*9 box, 6 tiny chars with 2 pix border padding. 2 pix button horizontal outer padding
     and 5 pix horizontal gap extra (4 of these gaps).
- [ ] Improve Edit Experience - colors, cursor, help dialog.
- [X] Keyboard - swap `()` and `[]` as lisp. Also `\` with `|` for arcane CS reasons and CTRL "causing" a SHIFT for `^\` (not synthetic `ÈSC`).
- [ ] Maybe add some uses for `<backtick>`, `ctrl`, `alt`, `opt`and `fn`.
-  * SI/SO, etc. Better done in keyboard handler? 
- [ ] `directory` - the card is 8 GB. Is `cd`reasonable?
- [ ] Color Keywords - improving mental parsing, and real pretty printing.
- [X] Bignums - from negative integer, subtract larger for possible error. BUG FIX.
- [ ] Bluetooth - maybe. Audio.
- [ ] Key Input -  maybe a non-blocking keyboard read.
- [ ] Sound - expand for more flexibility.
- [X] Numbers - a few more number theoretic functions.
- [ ] Calculus - a few more calculus functions.
- [ ] Solver - some kind of variable solver.
- [ ] Streams - maybe there's more. Audio.
- [ ] Other Types - for rational and complex. Choice of natural R or P representation.
+- [ ] Improve Edit Experience - colors, cursor, help dialog.
+- [X] Keyboard - swap `()` and `[]` as lisp. Also `\` with `|` for arcane CS reasons and CTRL "causing" a SHIFT for `^\` (not synthetic `ÈSC`).
+- [ ] Maybe add some uses for `<backtick>`, `ctrl`, `alt`, `opt`and `fn`.
+ - SI/SO, etc. Better done in keyboard handler? 
+- [ ] `directory` - the card is 8 GB. Is `cd`reasonable?
+- [ ] Color Keywords - improving mental parsing, and real pretty printing.
+- [X] Bignums - from negative integer, subtract larger for possible error. BUG FIX.
+- [ ] Bluetooth - maybe. Audio.
+- [ ] Key Input -  maybe a non-blocking keyboard read.
+- [ ] Sound - expand for more flexibility.
+- [X] Numbers - a few more number theoretic functions.
+- [ ] Calculus - a few more calculus functions.
+- [ ] Solver - some kind of variable solver.
+- [ ] Streams - maybe there's more. Audio.
+- [ ] Other Types - for rational and complex. Choice of natural R or P representation.
 
 ## Other M5Carputer Projects
 
