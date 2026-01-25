@@ -2301,15 +2301,15 @@ object *edit (object *fun) {
     if (tstflag(EXITEDITOR)) return fun;
     char c = gserial();
     if (c == 0x60) setflag(EXITEDITOR); // Summarian escape
-    else if (c == ';') return fun;
-    else if (c == ' ') fun = read(gserial);
+    else if (c == ';') return fun;// up tree
+    else if (c == '(') fun = read(gserial);// a better start of a replace
     // TODO: `Tally printing to not scroll off, font size and  ... autorefresh
     else if (c == '\n') { pfl(pserial); superprint(fun, 0, false, pserial); pln(pserial); }
-    else if (c == '.') fun = cons(read(gserial), fun);
+    else if (c == '.') fun = cons(read(gserial), fun);// ( . ) lobe sided centre tree inserty thing
     else if (atom(fun)) pserial('!');
-    else if (c == '/') fun = cons(car(fun), edit(cdr(fun)));
-    else if (c == ',') fun = cons(edit(car(fun)), cdr(fun));
-    else if (c == '\b') fun = cdr(fun);
+    else if (c == '/') fun = cons(car(fun), edit(cdr(fun)));// rest tree
+    else if (c == ',') fun = cons(edit(car(fun)), cdr(fun));// first tree
+    else if (c == '\b') fun = cdr(fun);// delete
     else pserial('?');
   }
 }
@@ -6634,9 +6634,12 @@ char decodeKey () {
     else if(i == '(') i = '['; else if(i == ')') i = ']';
     else if(i == '|') i = '\\'; else if(i == '\\') i = '|';
     else status.shift = !status.shift;//restore when not specially lisped
-    if (status.ctrl) return i - 64; else return i;
+    if (status.ctrl) return i - 64;
+    else if(status.fn && i = 96) return 27;// ESC
+    else if(status.fn && i = '\b') return 0x7f;// DEL
+    else return i;
   }
-  if (status.enter && status.shift) return 26; // For echo last line
+  if (status.enter && status.shift) return 26; // For echo last line SUB
   if (status.enter) return '\n';
   if (status.del) return 8;
   if (status.tab) return '\t';
