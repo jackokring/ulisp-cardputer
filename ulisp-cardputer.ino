@@ -6495,6 +6495,20 @@ void prin1object (object *form, pfun_t pfun) {
 
 // M5Stack Cardputer terminal and keyboard support
 
+void dot() {
+  M5Cardputer.Speaker.tone(440, 250);// .
+  delay(500);
+}
+
+void dash() {
+  M5Cardputer.Speaker.tone(440, 750);
+  delay(1000);
+}
+
+void spacer() {
+  delay(500);// 250 from last
+}
+
 const int ScreenWidth = 240, ScreenHeight = 135;
 #if defined(largerfont) // 8x16 font
 const int Leading = 15, CharWidth = 8;
@@ -6561,10 +6575,11 @@ const char SHIFTRETURN = 26;
 const char KEY_ESC = 27;
 
 void Display (char c) {
+  // Unused DLE, SYN, ETB, CAN, EM, FS, GS, RS, US.
   #if defined(gfxsupport)
   static bool displayDisabled = false;
-  if (c == 14) displayDisabled = true;
-  if (c == 15) displayDisabled = false;
+  if (c == 14) displayDisabled = true;// SO
+  if (c == 15) displayDisabled = false;// SI
   if (displayDisabled) return;
   static uint8_t line = 0, column = 0;
   static bool invert = false;
@@ -6581,7 +6596,7 @@ void Display (char c) {
     } else column++;
     return;
   }
-  if ((c >= 17) && (c <= 20)) {    // Parentheses
+  if ((c >= 17) && (c <= 20)) {    // Parentheses DC1 to DC4
     if (c == 17) PlotChar('(', line, column);
     else if (c == 18) PlotChar('(' | 0x80, line, column);
     else if (c == 19) PlotChar(')', line, column);
@@ -6592,32 +6607,45 @@ void Display (char c) {
   if (c == ETX) { invert = false; return; }
   // Hide cursor
   PlotChar(' ', line, column);
-  if (c == 0x7F) {                 // DEL
+  if (c == 26) c = 0xff;// SUB mark
+  else if (c == 0x7F) {                 // DEL
     if (column == 0 && line != 0) {
       line--; column = LastColumn;
     } else column--;
   } else if ((c & 0x7f) >= 32) {   // Normal character
-    if (invert) PlotChar(c | 0x80, line, column++); else PlotChar(c, line, column++);
+    if (invert) PlotChar(c ^ 0x80, line, column++); else PlotChar(c, line, column++);
     if (column > LastColumn) {
       column = 0;
       if (line == LastLine) ScrollDisplay(); else line++;
     }
   // Control characters
-  } else if (c == 12) {            // Clear display
-    tft.fillScreen(BLACK); line = 0; column = 0; Scroll = 0;
+  } else if(c == 1) { // Home SOH
+    column = 0; Scroll = 0; line = 0;
+  } else if (c == 12) {            // Clear display FF
+    tft.fillScreen(BLACK); line = 0; column = 0; Scroll = 0; line = 0;
     for (int col = 0; col < Columns; col++) {
       for (int row = 0; row < Lines; row++) {
         ScrollBuf[col][row] = 0;
       }
     }
-  } else if (c == '\n') {          // Newline
+  } else if (c == '\n') {          // Newline LF
     column = 0;
     if (line == LastLine) ScrollDisplay(); else line++;
-  } else if (c == '\r') {          // Return 
+  } else if (c == '\r') {          // Return CR
     column = 0;
-  } else if (c == VT) {
+  } else if (c == VT) { // Vertical tab VT
     if (line != LastLine) line++;
-  } else if (c == BEEP) tone(0, 440, 125); // Beep
+  } else if (c == BEEP) { // morse bell line enquires
+    dot(); // Beep BEL
+  } else if (c == 4) { // EoT
+    dot(); spacer(); dash();// . -
+  } else if (c == 5) { // EnQ
+    dot(); spacer(); dash(); dash(); dot(); dash(); // . --.-
+  } else if (c == 6) { // AcK
+    dot(); dash(); spacer(); dash(); dot(); dash(); // .- -.-
+  } else if (c == 21) { // NaK
+    dash(); dot(); spacer(); dash(); dot(); dash(); // -. -.-
+  }
   // Show cursor
   PlotChar(Cursor, line, column);
  #endif
@@ -6629,21 +6657,20 @@ char decodeKey () {
   Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
   // Cardputer lisp keys chosen
   for (auto i : status.word) {
-    status.shift = !status.shift;
     if(i == '[') i = '('; else if(i == ']') i = ')';
     else if(i == '(') i = '['; else if(i == ')') i = ']';
-    else if(i == '|') i = '\\'; else if(i == '\\') i = '|';
-    else status.shift = !status.shift;//restore when not specially lisped
+    else if(i == '|') i = '\\'; else if(i == '\\') i = '|';//ctrl applies shift pattern
+    // so gets ^\ decoding
     if (status.ctrl) return i - 64;
-    else if(status.fn && i = 96) return 27;// ESC
-    else if(status.fn && i = '\b') return 0x7f;// DEL
+    else if(status.fn && i == 96) return 27;// ESC
+    else if(status.fn && i == '\b') return 0x7f;// DEL
     else return i;
   }
   if (status.enter && status.shift) return 26; // For echo last line SUB
   if (status.enter) return '\n';
   if (status.del) return 8;
   if (status.tab) return '\t';
-  return 0;
+  return 0; // NUL ok none
 }
 
 bool reset_autocomplete = false;
