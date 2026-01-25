@@ -204,7 +204,7 @@ void* StackBottom;
 // Flags
 enum flag { PRINTREADABLY, RETURNFLAG, ESCAPE, EXITEDITOR, LIBRARYLOADED, NOESC, NOECHO, MUFFLEERRORS, BACKTRACE };
 typedef uint16_t flags_t;
-flags_t Flags = 1<<PRINTREADABLY; // Set by default
+flags_t Flags = 1<<PRINTREADABLY |  1<<EXITEDITOR; // Set by default
 
 // Forward references
 object *tee;
@@ -2300,16 +2300,16 @@ object *edit (object *fun) {
     // more cardputer
     if (tstflag(EXITEDITOR)) return fun;
     char c = gserial();
-    if (c == 0x60) setflag(EXITEDITOR); // Summarian escape
+    if (c == 0x60 || c == 'q') setflag(EXITEDITOR); // Summarian escape
     else if (c == ';') return fun;// up tree
-    else if (c == '(') fun = read(gserial);// a better start of a replace
+    else if (c == '(' || c == 'r') fun = read(gserial);// a better start of a replace
     // TODO: `Tally printing to not scroll off, font size and  ... autorefresh
     else if (c == '\n') { pfl(pserial); superprint(fun, 0, false, pserial); pln(pserial); }
-    else if (c == '.') fun = cons(read(gserial), fun);// ( . ) lobe sided centre tree inserty thing
+    else if (c == '.' || c == 'c') fun = cons(read(gserial), fun);// ( . ) lobe sided centre tree inserty thing
     else if (atom(fun)) pserial('!');
-    else if (c == '/') fun = cons(car(fun), edit(cdr(fun)));// rest tree
-    else if (c == ',') fun = cons(edit(car(fun)), cdr(fun));// first tree
-    else if (c == '\b') fun = cdr(fun);// delete
+    else if (c == '/' || c == 'd') fun = cons(car(fun), edit(cdr(fun)));// rest tree
+    else if (c == ',' || c == 'a') fun = cons(edit(car(fun)), cdr(fun));// first tree
+    else if (c == '\b' || c == 'x') fun = cdr(fun);// delete
     else pserial('?');
   }
 }
@@ -6557,6 +6557,7 @@ void ScrollDisplay () {
     while(scrollLock) {// busy on scroll lock OPT key
       if(decodeKey()) break;// next page on key, without scroll lock release by ctrl + enter
       delay(125);
+      // don't "process" the key, so can't use gserial (no feed to lisp logic)
     }  
   }
   tft.fillRect(0, (Lines*Leading)-Leading, ScreenWidth, Leading, BLACK);
@@ -7113,7 +7114,8 @@ void setup () {
   initsleep();
   initBoard();
   initgfx();
-  pfstring(PSTR("uLisp 4.8f "), pserial); pln(pserial);
+  // append k for jackokring version
+  pfstring(PSTR("uLisp 4.8fk "), pserial); pln(pserial);
 }
 
 // Read/Evaluate/Print loop
@@ -7122,6 +7124,7 @@ void repl (object *env) {
   for (;;) {
     randomSeed(micros());
     pserial(15);// restore prompt output
+    pserial(3);// remove any invert
     #if defined(printfreespace)
     if (!tstflag(NOECHO)) gc(NULL, env);
     pint(Freespace+1, pserial);
