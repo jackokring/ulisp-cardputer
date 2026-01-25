@@ -6494,19 +6494,24 @@ void prin1object (object *form, pfun_t pfun) {
 }
 
 // M5Stack Cardputer terminal and keyboard support
+uint16_t bellLen = 125;
 
 void dot() {
-  M5Cardputer.Speaker.tone(440, 250);// .
-  delay(500);
+  M5Cardputer.Speaker.tone(440, bellLen);// .
+  delay(bellLen << 1);// 1 + 1
 }
 
 void dash() {
-  M5Cardputer.Speaker.tone(440, 750);
-  delay(1000);
+  M5Cardputer.Speaker.tone(440, bellLen * 3);// -
+  delay(bellLen << 2); // 3 + 1
 }
 
 void spacer() {
-  delay(500);// 250 from last
+  delay(bellLen << 1);// plus 1 from last
+}
+
+void wordSpacer() {
+  delay(bellLen * 6);// plus 1 from last
 }
 
 const int ScreenWidth = 240, ScreenHeight = 135;
@@ -6575,7 +6580,7 @@ const char SHIFTRETURN = 26;
 const char KEY_ESC = 27;
 
 void Display (char c) {
-  // Unused DLE, SYN, ETB, CAN, EM, FS, GS, RS, US.
+  // Unused DLE, SYN, CAN, EM, FS, GS, RS, US.
   #if defined(gfxsupport)
   static bool displayDisabled = false;
   if (c == 14) displayDisabled = true;// SO
@@ -6607,6 +6612,12 @@ void Display (char c) {
   if (c == ETX) { invert = false; return; }
   // Hide cursor
   PlotChar(' ', line, column);
+  if (c == 23) { // new para formatting ETB
+    displayDisabled = false;
+    invert = false;
+    if (line == LastLine) ScrollDisplay(); else line++;//line para
+    c = '\n'; 
+  }
   if (c == 26) c = 0xff;// SUB mark
   else if (c == 0x7F) {                 // DEL
     if (column == 0 && line != 0) {
@@ -6638,14 +6649,14 @@ void Display (char c) {
   } else if (c == BEEP) { // morse bell line enquires
     dot(); // Beep BEL
   } else if (c == 4) { // EoT
-    dot(); spacer(); dash();// . -
+    dot(); spacer(); dash(); wordSpacer();// . -
   } else if (c == 5) { // EnQ
-    dot(); spacer(); dash(); dash(); dot(); dash(); // . --.-
+    dot(); spacer(); dash(); dash(); dot(); dash(); wordSpacer();// . --.-
   } else if (c == 6) { // AcK
-    dot(); dash(); spacer(); dash(); dot(); dash(); // .- -.-
+    dot(); dash(); spacer(); dash(); dot(); dash(); wordSpacer();// .- -.-
   } else if (c == 21) { // NaK
-    dash(); dot(); spacer(); dash(); dot(); dash(); // -. -.-
-  }
+    dash(); dot(); spacer(); dash(); dot(); dash(); wordSpacer();// -. -.-
+  } 
   // Show cursor
   PlotChar(Cursor, line, column);
  #endif
