@@ -2295,22 +2295,44 @@ void superprint (object *form, int lm, bool match, pfun_t pfun) {
   }
 }
 
+void new_screen() {
+  tft.invertDisplay(false);
+  pfl(pserial); pserial(15); pserial(12);
+}
+
 object *edit (object *fun) {
   while (1) {
     // more cardputer
-    if (tstflag(EXITEDITOR)) return fun;
+    new_screen();
+    if (tstflag(EXITEDITOR)) {
+      // new screen for exit
+      return fun;
+    }
+    superprint(fun, 0, false, pserial); pln(pserial);//print
     char c = gserial();
     if (c == 0x60 || c == 'q') setflag(EXITEDITOR); // Summarian escape
     else if (c == ';') return fun;// up tree
-    else if (c == '(' || c == 'r') fun = read(gserial);// a better start of a replace
-    // TODO: `Tally printing to not scroll off, font size and  ... autorefresh
-    else if (c == '\n') { pfl(pserial); superprint(fun, 0, false, pserial); pln(pserial); }
-    else if (c == '.' || c == 'c') fun = cons(read(gserial), fun);// ( . ) lobe sided centre tree inserty thing
-    else if (atom(fun)) pserial('!');
+    else if (c == '(' || c == 'r') {
+      new_screen();
+      pfstring("> ", pserial);
+      fun = read(gserial);// a better start of a replace
+    }
+    else if (c == '.' || c == 'c') {
+      new_screen();
+      pfstring("cons> ", pserial);
+      fun = cons(read(gserial), fun);// ( . ) lobe sided centre tree inserty thing
+    }
+    else if (atom(fun)) {
+      tft.invertDisplay(true);
+      delay(125);
+    }
     else if (c == '/' || c == 'd') fun = cons(car(fun), edit(cdr(fun)));// rest tree
     else if (c == ',' || c == 'a') fun = cons(edit(car(fun)), cdr(fun));// first tree
     else if (c == '\b' || c == 'x') fun = cdr(fun);// delete
-    else pserial('?');
+    else {
+      tft.invertDisplay(true);
+      delay(125);
+    }
   }
 }
 
@@ -6554,6 +6576,10 @@ uint8_t scrollLock = false;
 
 void ScrollDisplay () {
   if(Scroll == LastLine) {
+    if (!tstflag(EXITEDITOR)) {
+      Display(14);//end listing after one screen
+      return;
+    }
     while(scrollLock) {// busy on scroll lock OPT key
       if(decodeKey()) break;// next page on key, without scroll lock release by ctrl + enter
       delay(125);
