@@ -6550,7 +6550,15 @@ void PlotChar (uint8_t ch, uint8_t line, uint8_t column) {
 #endif
 }
 
+uint8_t scrollLock = false;
+
 void ScrollDisplay () {
+  if(Scroll == LastLine) {
+    while(scrollLock) {// busy on scroll lock OPT key
+      if(decodeKey()) break;// next page on key, without scroll lock release by ctrl + enter
+      delay(125);
+    }  
+  }
   tft.fillRect(0, (Lines*Leading)-Leading, ScreenWidth, Leading, BLACK);
   for (uint8_t x = 0; x < Columns; x++) {
     char c = ScrollBuf[x][Scroll];
@@ -6580,7 +6588,8 @@ const char SHIFTRETURN = 26;
 const char KEY_ESC = 27;
 
 void Display (char c) {
-  // Unused DLE, SYN, CAN, EM, FS, GS, RS, US.
+  // Unused DLE, (SYN), (CAN), EM, FS, GS, RS, US.
+  // brackets are for codes that are not output control codes but perhaps ignored input control codes
   #if defined(gfxsupport)
   static bool displayDisabled = false;
   if (c == 14) displayDisabled = true;// SO
@@ -6672,12 +6681,16 @@ char decodeKey () {
     else if(i == '(') i = '['; else if(i == ')') i = ']';
     else if(i == '|') i = '\\'; else if(i == '\\') i = '|';//ctrl applies shift pattern
     // so gets ^\ decoding
-    if (status.ctrl) return i - 64;
+    if (status.ctrl && i > 31) return i - 64;
     else if(status.fn && i == 96) return 27;// ESC
     else if(status.fn && i == '\b') return 0x7f;// DEL
     else return i;
   }
   if (status.enter && status.shift) return 26; // For echo last line SUB
+  if (status.enter && status.ctrl) {
+    scrollLock = !scrollLock;// ctrl + enter
+    return 0;
+  }
   if (status.enter) return '\n';
   if (status.del) return 8;
   if (status.tab) return '\t';
@@ -6775,6 +6788,11 @@ void ProcessKey (char c) {
     // as set in buffer as 0x7f
     for (int i = 0; i < LastWritePtr; i++) Display(KybdBuf[i]);
     WritePtr = LastWritePtr;
+  } else if (c == 24) { // CAN
+    for (int i = 0; i < WritePtr; i++) {// clear entry
+      WritePtr--;
+      Display(0x7F);
+    }
   } else if (WritePtr < KybdBufSize) {
     if (c == '"') {
       string = !string;
