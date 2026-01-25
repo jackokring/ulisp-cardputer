@@ -61,4 +61,7 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
 (defun save-file (filename)
   (with-sd-card (s filename 2)
     (pprintall s)))
+
+(defun concat (&rest args)
+  (apply concatenate (append '(string) args)))
 )lisplibrary";
