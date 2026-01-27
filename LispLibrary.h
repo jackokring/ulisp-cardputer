@@ -64,4 +64,9 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
 
 (defun concat (&rest args)
   (apply concatenate (cons 'string args)))
+
+(defun ^ (n &rest e)
+  (loop
+    (if e (setq n (expt n (car e)) e (cdr e))
+      (return n)))
 )lisplibrary";
