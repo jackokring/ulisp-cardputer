@@ -68,5 +68,6 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
 (defun ^ (n &rest e)
   (loop
     (if e (setq n (expt n (car e)) e (cdr e))
-      (return n)))
+      (return n))))
+(defun nanp (x) (/= x x))
 )lisplibrary";

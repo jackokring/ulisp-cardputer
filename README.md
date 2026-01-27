@@ -30,6 +30,12 @@ The free **RAM** is 99404 Bytes (**31%** free) or about **22 k of lisp symbols**
 See **LispLibrary.h** for details of the expanding set of lisp additions, along with some copied from the uLisp documentation.
 I'm definitly not including everything, and some of the choices are based on making a useful tool foundation.
 
+## Don't Panic (Mr. Mannering ...)
+
+The Arduino `tone()` function is not used. It never was (my mistake), as it's all done with the speaker. I must read more of the code again.
+The esp32 board plugin must invalidate it in all likelyhood, preventing function redefinition errors. I don't think the **keyword highlight** helps
+in this regard. 2026-01-27: You can tell I'm thinking about UI and multimedia today!
+
 ## Things I Might Do (Not Everything, but Alot with Simple Function Choices)
 
 - [ ] Interface UI Builder - make apps easier to make using GFX toolkit, perhaps some PROGMEM graphics images.
@@ -47,11 +53,12 @@ I'm definitly not including everything, and some of the choices are based on mak
 - [ ] Bluetooth - maybe. Audio.
 - [ ] Key Input -  maybe a non-blocking keyboard read.
 - [ ] Sound - expand for more flexibility.
-- [X] Numbers - a few more number theoretic functions.
+- [X] Numbers - a few more number theoretic functions. For bignums and `(^ number*)` for floating point continued powers with a shorter name. Maybe `(nanp number)`.
 - [ ] Calculus - a few more calculus functions.
 - [ ] Solver - some kind of variable solver.
 - [ ] Streams - maybe there's more. Audio.
 - [ ] Other Types - for rational and complex. Choice of natural R or P representation.
+- [X] ULOS Simple Object System.
 
 ## Other M5Carputer Projects
 
