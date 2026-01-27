@@ -6836,15 +6836,14 @@ void ProcessKey (char c) {
       c = KybdBuf[search--];
       if (c == '"') {
          string2 = !string2;// "\"" ??
-         if(search > 0 && KybdBuf[search] == '\\') {
+         if(search >= 0 && KybdBuf[search] == '\\') {
             string2 = !string2;//correct string escape #\"
-            search--;
          }
       }
       // #\( and #\)
       if (!string2)
-        if (search > 1 && KybdBuf[search - 1] != '#')
-          if (search > 0 && KybdBuf[search - 1] != '\\') {
+        if (search > 0 && KybdBuf[search - 1] != '#')
+          if (KybdBuf[search] != '\\') {
             if (c == ')' && !string2) level++;
             if (c == '(' && !string2) {
               level--;
