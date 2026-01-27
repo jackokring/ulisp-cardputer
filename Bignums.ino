@@ -388,6 +388,7 @@ object *fn_Ssub (object *args, object *env) {
   (void) env;
   auto result = bignum_sub(checkbignum(first(args)), checkbignum(second(args)));
   if(borrow) error2(PSTR("negative result subtracting bignums"));
+  return result;
 }
 
 /*
@@ -403,7 +404,9 @@ object *fn_Smul (object *args, object *env) {
   Divides two bignums and returns the quotient as a new bignum.
 */
 object *fn_Sdiv (object *args, object *env) {
-  return first(bignum_div(checkbignum(first(args)), checkbignum(second(args)), env));
+  auto d = checkbignum(second(args));
+  if(bignum_zerop(d)) error2(PSTR("division by zero dividing bignums"));
+  return first(bignum_div(checkbignum(first(args)), d, env));
 }
 
 /*

@@ -49,11 +49,12 @@ in this regard. 2026-01-27: You can tell I'm thinking about UI and multimedia to
 - [ ] SI/SO Functions - maybe some others too to easily access some console control.
 - [ ] `directory` - the card is 8 GB. Is `cd`reasonable?
 - [ ] Color Keywords - improving mental parsing, and real pretty printing.
-- [X] Bignums - from negative integer, subtract larger for possible error. BUG FIX.
+- [X] Bignums - from negative integer, subtract larger for possible error. Division by zero.
 - [ ] Bluetooth - maybe. Audio.
 - [ ] Key Input -  maybe a non-blocking keyboard read.
 - [ ] Sound - expand for more flexibility.
 - [X] Numbers - a few more number theoretic functions. For bignums and `(^ number*)` for floating point continued powers with a shorter name. Maybe `(nanp number)`.
+- [X] List Reduce - a `(rreduce 'op items*)` (right associative reduce) for any dyad operator with a `nil` parameter return of the reduction accumulator. As `(+)` does.
 - [ ] Calculus - a few more calculus functions.
 - [ ] Solver - some kind of variable solver.
 - [ ] Streams - maybe there's more. Audio.
