@@ -77,4 +77,6 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
           (setq a (op (car arg) a) arg (cdr arg))
           (return 'a)))))
 (defun nanp (x) (/= x x))
+(defun gfx () (write-byte #\SO))
+(defun cli () (write-byte #\SI) (write-byte #\Page))
 )lisplibrary";

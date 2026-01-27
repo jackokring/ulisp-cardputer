@@ -2165,20 +2165,21 @@ void checkanalogwrite (int pin) {
 // Note
 
 void tone (int pin, int freq, uint16_t duration) {
-  M5Cardputer.Speaker.stop();
-  M5Cardputer.Speaker.tone(freq, duration);
+  M5Cardputer.Speaker.stop(pin & 7);
+  M5Cardputer.Speaker.tone(freq, duration, pin & 7);
 }
 
 void noTone (int pin) {
-  M5Cardputer.Speaker.stop();
+  M5Cardputer.Speaker.stop(pin & 7);
 }
 
 const int scale[] = {4186,4435,4699,4978,5274,5588,5920,6272,6645,7040,7459,7902};
 
-void playnote (int pin, int note, int octave) {
-  int prescaler = 8 - octave - note/12;
-  if (prescaler<0 || prescaler>8) error("octave out of range", number(prescaler));
-  tone(pin, scale[note%12]>>prescaler, 0);
+//least harmful repurpose of octave as duration
+void playnote (int pin, int note, int duration) {
+  int prescaler = 8 - note/12;
+  if (prescaler<0 || prescaler>8) error("note out of range", number(prescaler));
+  tone(pin, scale[note%12]>>prescaler, duration);
 }
 
 void nonote (int pin) {
@@ -4208,12 +4209,12 @@ object *fn_note (object *args, object *env) {
   static int pin = 255;
   if (args != NULL) {
     pin = checkinteger(first(args));
-    int note = 48, octave = 0;
+    int note = 48, len = 0;
     if (cdr(args) != NULL) {
       note = checkinteger(second(args));
-      if (cddr(args) != NULL) octave = checkinteger(third(args));
+      if (cddr(args) != NULL) len = checkinteger(third(args));
     }
-    playnote(pin, note, octave);
+    playnote(pin, note, len);
   } else nonote(pin);
   return nil;
 }
@@ -6516,15 +6517,15 @@ void prin1object (object *form, pfun_t pfun) {
 }
 
 // M5Stack Cardputer terminal and keyboard support
-uint16_t bellLen = 125;
+const int bellLen = 125;
 
 void dot() {
-  M5Cardputer.Speaker.tone(440, bellLen);// .
+  playnote(0, 0, bellLen);// .
   delay(bellLen << 1);// 1 + 1
 }
 
 void dash() {
-  M5Cardputer.Speaker.tone(440, bellLen * 3);// -
+  playnote(0, 0, bellLen * 3);// -
   delay(bellLen << 2); // 3 + 1
 }
 

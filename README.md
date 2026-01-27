@@ -60,6 +60,7 @@ in this regard. 2026-01-27: You can tell I'm thinking about UI and multimedia to
 - [ ] Streams - maybe there's more. Audio.
 - [ ] Other Types - for rational and complex. Choice of natural R or P representation.
 - [X] ULOS Simple Object System.
+- [X] Octo-Sound. Use the "pin" number as the channel number. As the Cardputer otherwise doesn't use it. Octave becomes duration. Add `(* 12 octave)` to the note. **Clicky?**
 
 ## Other M5Carputer Projects
 
