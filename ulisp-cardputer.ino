@@ -6849,13 +6849,11 @@ void ProcessKey (char c) {
       }
       // #\( and #\)
       if (!string2)
-        if (search > 0 && KybdBuf[search - 1] != '#')
-          if (KybdBuf[search] != '\\') {
-            if (c == ')' && !string2) level++;
-            if (c == '(' && !string2) {
-              level--;
-              if (level == 0) parenthesis = WritePtr-search-1;
-            }
+        if (search < 1 || (search > 0 && KybdBuf[search - 1] != '#' && KybdBuf[search] != '\\'))
+          if (c == ')' && !string2) level++;
+          if (c == '(' && !string2) {
+            level--;
+            if (level == 0) parenthesis = WritePtr-search-1;
           }
     }
     Highlight(parenthesis, 1);
