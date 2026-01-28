@@ -6818,6 +6818,7 @@ void ProcessKey (char c) {
     WritePtr = LastWritePtr;
   } else if (c == 24) { // CAN
     for (int i = 0; i < WritePtr; i++) {// clear entry
+      LastWritePtr = WritePtr;//remember for shift + enter
       WritePtr--;
       Display(0x7F);
     }

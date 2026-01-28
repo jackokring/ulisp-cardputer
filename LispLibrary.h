@@ -109,4 +109,6 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
 ; Platform
 (defun gfx () (write-byte #\SO))
 (defun cli () (write-byte #\SI) (write-byte #\Page))
+(defun rgb (r g b)
+  (logior (ash (logand r #xf8) 8) (ash (logand g #xfc) 3) (ash b -3)))
 )lisplibrary";
