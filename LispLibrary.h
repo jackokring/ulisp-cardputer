@@ -1,4 +1,9 @@
 const char LispLibrary[] PROGMEM = R"lisplibrary(
+; These functions use lisp cons cells from the free pool.
+; Spaces here just use a little extra PROGMEM.
+; comments also just use PROGMEM and not uLisp RAM from the free pool.
+
+; ULOS Objects
 (defun object (&optional parent slots)
   (let ((obj (when parent (list (cons 'parent parent)))))
     (loop
@@ -16,6 +21,7 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
   (let ((pair (assoc slot obj)))
     (when pair (setf (cdr pair) value))))
 
+; Bignum
 (defun $expt (x y)
   (let (($e ($bignum 1))
         ($f ($bignum x)))
@@ -53,6 +59,7 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
      (setq d ($gcd (if ($> x y) ($- x y) ($- y x)) n)))
     (if ($= d n) nil d)))
 
+; Load Save
 (defun load-file (filename)
   (with-sd-card (s filename)
     (loop (let ((r (read s)))
@@ -62,13 +69,35 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
   (with-sd-card (s filename 2)
     (pprintall s)))
 
+; String
 (defun concat (&rest args)
   (apply concatenate (cons 'string args)))
-
+; Float
 (defun ^ (n &rest e)
   (loop
     (if e (setq n (expt n (car e)) e (cdr e))
       (return n))))
+(defun nanp (x) (/= x x))
+(defun rational (x)
+  (let* ((s (if (minusp x) -1 1))
+         (x (abs x))
+         (i (truncate x))
+         (f (- x i)))
+   (let* ((r f) (k 1) (l 1) (m 0) (j 0) d n)
+       (loop
+        (when (< (abs (- f (/ j l))) 1e-6) (return))
+        (setq r (/ r))
+        (setq d (truncate r))
+        (setq r (- r d))
+        (setq n j) (setq j (+ (* j d) k)) (setq k n)
+        (setq n l) (setq l (+ (* l d) m)) (setq m n))
+       (cond
+        ((zerop j) (* i s))
+        ((zerop i) (list '/ (* j s) l))
+        ((plusp s) (list '+ i (list '/ j l)))
+        (t (list '- (list '+ i (list '/ j l))))))))
+
+; List
 (defun rreduce (op &rest arg)
   (let ((a (op)))
     (setq arg (reverse arg))
@@ -76,7 +105,8 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
         (if arg 
           (setq a (op (car arg) a) arg (cdr arg))
           (return 'a)))))
-(defun nanp (x) (/= x x))
+
+; Platform
 (defun gfx () (write-byte #\SO))
 (defun cli () (write-byte #\SI) (write-byte #\Page))
 )lisplibrary";
