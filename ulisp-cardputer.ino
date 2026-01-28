@@ -6824,7 +6824,12 @@ void ProcessKey (char c) {
   } else if (WritePtr < KybdBufSize) {
     if (c == '"') {
       string = !string;
-      if (WritePtr > 0 && KybdBuf[WritePtr] == '\\') string = !string;//correct string escape #\"
+      bool escaped = false;
+      int search = WritePtr - 1;
+       while(search >= 0 && KybdBuf[search--] == '\\') {
+          escaped = !escaped;
+       }
+       if(escaped) string = !string;//correct string escape \\\"
     }
     KybdBuf[WritePtr++] = c;
     Display(c);
@@ -6836,9 +6841,11 @@ void ProcessKey (char c) {
       c = KybdBuf[search--];
       if (c == '"') {
          string2 = !string2;// "\"" ??
-         if(search >= 0 && KybdBuf[search] == '\\') {
-            string2 = !string2;//correct string escape #\"
+         bool escaped = false;
+         while(search >= 0 && KybdBuf[search--] == '\\') {
+            escaped = !escaped;
          }
+         if(escaped) string2 = !string2;//correct string escape \\\"
       }
       // #\( and #\)
       if (!string2)
