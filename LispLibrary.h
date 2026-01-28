@@ -72,6 +72,9 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
 ; String
 (defun concat (&rest args)
   (apply concatenate (cons 'string args)))
+(defun rjust (w &optional (s "") (c " "))
+  (loop
+    (if (>= (length s) w) (return s) (setq s (concat c s)))))
 ; Float
 (defun ^ (n &rest e)
   (loop
