@@ -6825,12 +6825,10 @@ void ProcessKey (char c) {
   } else if (WritePtr < KybdBufSize) {
     if (c == '"') {
       string = !string;
-      bool escaped = false;
       int search = WritePtr - 1;
        while(search >= 0 && KybdBuf[search--] == '\\') {
-          escaped = !escaped;
+          string = !string;
        }
-       if(escaped) string = !string;//correct string escape \\\"
     }
     KybdBuf[WritePtr++] = c;
     Display(c);
@@ -6841,21 +6839,21 @@ void ProcessKey (char c) {
     while (search >= 0 && parenthesis == 0) {
       c = KybdBuf[search--];
       if (c == '"') {
-         string2 = !string2;// "\"" ??
-         bool escaped = false;
-         while(search >= 0 && KybdBuf[search--] == '\\') {
-            escaped = !escaped;
+         string2 = !string2;// "\"" ?? or \\\" etc
+         while(search >= 0 && KybdBuf[search--] == '\\') {// also does #\" as in string it be #\\\"
+            string2 = !string2;
          }
-         if(escaped) string2 = !string2;//correct string escape \\\"
       }
       // #\( and #\)
-      if (!string2)
-        if (search < 1 || (search > 0 && KybdBuf[search - 1] != '#' && KybdBuf[search] != '\\'))
-          if (c == ')' && !string2) level++;
-          if (c == '(' && !string2) {
-            level--;
-            if (level == 0) parenthesis = WritePtr-search-1;
-          }
+      if (!string2) // not in string
+        // two character min check > 0 so [search - 1] not out of bounds
+        if (search > 0 && KybdBuf[search] == '\\' && KybdBuf[search - 1] == '#') continue;// #\( and #\)
+        // non escaped bracket outside string
+        if (c == ')') level++;
+        if (c == '(') {
+          level--;
+          if (level == 0) parenthesis = WritePtr-search-1;
+        }
     }
     Highlight(parenthesis, 1);
   }
