@@ -101,14 +101,9 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
         (t (list '- (list '+ i (list '/ j l))))))))
 
 ; List
-(defun rreduce (op &rest arg)
-  (let ((a (op)))
-    (setq arg (reverse arg))
-      (loop
-        (cond
-          ((null arg) (return a))
-          ((null (cdr arg)) (return (op (car arg))))
-          (t (setq a (op (car arg) a) arg (cdr arg)))))))
+(defun reduce (op &rest arg)
+  (if (null (cdr arg)) (if (null arg) (op) (car arg))
+    (funcall op (car arg) (reduce op (cdr arg)))))
 
 ; Platform
 (defun gfx () (write-byte #\SO))
