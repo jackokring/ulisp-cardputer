@@ -1,4 +1,4 @@
-const char LispLibrary[] PROGMEM = R"lisplibrary(
+; TESTING SEPARATION OF LANGS
 ; These functions use lisp cons cells from the free pool.
 ; Spaces here just use a little extra PROGMEM.
 ; comments also just use PROGMEM and not uLisp RAM from the free pool.
@@ -116,4 +116,6 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
 (defun cli () (write-byte 15))
 (defun rgb (r g b)
   (logior (ash (logand r #xf8) 8) (ash (logand g #xfc) 3) (ash b -3)))
-)lisplibrary";
+
+; end
+()
