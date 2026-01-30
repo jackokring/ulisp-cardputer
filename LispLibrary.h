@@ -75,6 +75,7 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
 (defun rjust (w &optional (s "") (c " "))
   (loop
     (if (>= (length s) w) (return s) (setq s (concat c s)))))
+
 ; Float
 (defun ^ (n &rest e)
   (loop
@@ -111,8 +112,8 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
     ((null l) a)))))
 
 ; Platform
-(defun gfx () (write-byte #\SO))
-(defun cli () (write-byte #\SI) (write-byte #\Page))
+(defun gfx () (write-byte 14))
+(defun cli () (write-byte 15))
 (defun rgb (r g b)
   (logior (ash (logand r #xf8) 8) (ash (logand g #xfc) 3) (ash b -3)))
 )lisplibrary";

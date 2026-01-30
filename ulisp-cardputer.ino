@@ -45,7 +45,7 @@
 #define BUFFERSIZE 36  // Number of bits+4
 
 #if defined(CONFIG_IDF_TARGET_ESP32S3)
-  #define WORKSPACESIZE 23250          /* Cells (8*bytes) */
+  #define WORKSPACESIZE 22250          /* Cells (8*bytes) */
   #define MAX_STACK 6500
   #define tft M5Cardputer.Display
   #define COLOR_WHITE WHITE
@@ -211,10 +211,6 @@ object *tee;
 void pfstring (const char *s, pfun_t pfun);
 
 // Error handling
-
-void normaldisp() {
-  pserial(15); pserial(3);// SI, ETX
-}
 
 int modbacktrace (int n) {
   return (n+BACKTRACESIZE) % BACKTRACESIZE;
@@ -2302,7 +2298,9 @@ void superprint (object *form, int lm, bool match, pfun_t pfun) {
 
 void new_screen() {
   tft.invertDisplay(false);
-  pfl(pserial); normaldisp(); pserial(12);// FF clear
+  pfl(pserial);
+  pserial(15); pserial(3);// SI, ETX
+  pserial(12);// FF clear
 }
 
 object *edit (object *fun) {
@@ -7157,12 +7155,9 @@ void setup () {
 void repl (object *env) {
   for (;;) {
     randomSeed(micros());
-    //repl entry show
-    //botch first prompt?
-    if(env != NULL) normaldisp();//display on, no invert
     #if defined(printfreespace)
     if (!tstflag(NOECHO)) gc(NULL, env);
-    pint(Freespace+1, pserial);
+    pint(Freespace+1, pserial);// 2026-01-30 where's the 1st > ?
     #endif
     if (BreakLevel) {
       pfstring(" : ", pserial);
@@ -7188,7 +7183,6 @@ void repl (object *env) {
     protect(line);
     pfl(pserial);
     line = eval(line, env);
-    normaldisp();//show final output
     pfl(pserial);
     printobject(line, pserial);
     unprotect();
