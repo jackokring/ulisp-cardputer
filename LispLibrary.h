@@ -102,13 +102,13 @@ const char LispLibrary[] PROGMEM = R"lisplibrary(
         (t (list '- (list '+ i (list '/ j l))))))))
 
 ; List
-(defun reduce (op &rest arg)
+(defun reduce (op arg)
   (cond
     ((null arg) (funcall op))
     ((null (cdr arg)) (car arg))
     (t (do (
-      (a (car arg) (funcall op (car l) a))
-      (l (cdr (reverse arg)) (cdr l)))
+      (a (funcall op) (funcall op (car l) a))
+      (l (reverse arg) (cdr l)))
     ((null l) a)))))
 
 ; Platform
