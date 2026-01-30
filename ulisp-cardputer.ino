@@ -212,6 +212,10 @@ void pfstring (const char *s, pfun_t pfun);
 
 // Error handling
 
+void normaldisp() {
+  pserial(15); pserial(3);// SI, ETX
+}
+
 int modbacktrace (int n) {
   return (n+BACKTRACESIZE) % BACKTRACESIZE;
 }
@@ -2298,7 +2302,7 @@ void superprint (object *form, int lm, bool match, pfun_t pfun) {
 
 void new_screen() {
   tft.invertDisplay(false);
-  pfl(pserial); pserial(15); pserial(12);
+  pfl(pserial); normaldisp(); pserial(12);// FF clear
 }
 
 object *edit (object *fun) {
@@ -7153,8 +7157,9 @@ void setup () {
 void repl (object *env) {
   for (;;) {
     randomSeed(micros());
-    pserial(15);// restore prompt output
-    pserial(3);// remove any invert
+    //repl entry show
+    //botch first prompt?
+    if(env != NULL) normaldisp();//display on, no invert
     #if defined(printfreespace)
     if (!tstflag(NOECHO)) gc(NULL, env);
     pint(Freespace+1, pserial);
@@ -7183,6 +7188,7 @@ void repl (object *env) {
     protect(line);
     pfl(pserial);
     line = eval(line, env);
+    normaldisp();//show final output
     pfl(pserial);
     printobject(line, pserial);
     unprotect();
