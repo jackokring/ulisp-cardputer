@@ -7217,6 +7217,7 @@ void ulisperror () {
   #endif
   #if defined(lisplibrary)
   if (!tstflag(LIBRARYLOADED)) { setflag(LIBRARYLOADED); loadfromlibrary(NULL); }
+  clrflag(NOECHO);// maybe from some stream thing load library (defun from char* but no print?)
   #endif
   client.stop();
 }
