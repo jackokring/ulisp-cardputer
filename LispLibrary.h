@@ -100,16 +100,16 @@
         ((zerop i) (list '/ (* j s) l))
         ((plusp s) (list '+ i (list '/ j l)))
         (t (list '- (list '+ i (list '/ j l))))))))
+(defun asinh (x) (log (+ x (sqrt (1+ (* x x))))))
+(defun acosh (x) (log (+ x (sqrt (1- (* x x))))))
+(defun atanh (x) (/ (log (/ (1+ x) (- 1 x))) 2)) 
 
 ; List
 (defun reduce (op arg)
-  (cond
-    ((null arg) (funcall op))
-    ((null (cdr arg)) (car arg))
-    (t (do (
+    (do (
       (a (funcall op) (funcall op (car l) a))
       (l (reverse arg) (cdr l)))
-    ((null l) a)))))
+    ((null l) a)))
 
 ; Platform
 (defun gfx () (write-byte 14))
@@ -117,5 +117,5 @@
 (defun rgb (r g b)
   (logior (ash (logand r #xf8) 8) (ash (logand g #xfc) 3) (ash b -3)))
 
-; end
+; end - must follow by bracket, no bracket in comment so ...
 ()
