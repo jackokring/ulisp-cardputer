@@ -21,9 +21,7 @@
 
 // Includes
 
-const char LispLibrary[] PROGMEM = R"lisplibrary(
 #include "LispLibrary.h"
-)lisplibrary";
 
 #include <setjmp.h>
 #include <SPI.h>

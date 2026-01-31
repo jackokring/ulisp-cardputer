@@ -1,3 +1,4 @@
+; const char LispLibrary[] PROGMEM = R"lisplibrary(
 ; TESTING SEPARATION OF LANGS
 ; These functions use lisp cons cells from the free pool.
 ; Spaces here just use a little extra PROGMEM.
@@ -102,7 +103,7 @@
         (t (list '- (list '+ i (list '/ j l))))))))
 (defun asinh (x) (log (+ x (sqrt (1+ (* x x))))))
 (defun acosh (x) (log (+ x (sqrt (1- (* x x))))))
-(defun atanh (x) (/ (log (/ (1+ x) (- 1 x))) 2)) 
+(defun atanh (x) (/ (log (/ (1+ x) (- 1 x))) 2))
 
 ; List
 (defun reduce (op arg)
@@ -118,4 +119,4 @@
   (logior (ash (logand r #xf8) 8) (ash (logand g #xfc) 3) (ash b -3)))
 
 ; end - must follow by bracket, no bracket in comment so ...
-()
+; ())lisplibrary";
