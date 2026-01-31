@@ -36,10 +36,16 @@ The Arduino `tone()` function is not used. It never was (my mistake), as it's al
 The esp32 board plugin must invalidate it in all likelyhood, preventing function redefinition errors. I don't think the **keyword highlight** helps
 in this regard. 2026-01-27: You can tell I'm thinking about UI and multimedia today!
 
+## Extra Notes (After Reading the Source)
+
+- The uLisp documentation refers to "tail recursion" as a form. This contrary to the expectation of using less stack in a recursion loop,
+just performs an  `eval` post execution. In this sense it does save a stack frame by continuing with the "selected" for return list. More
+of a tail continuation, without an extra `eval` stack frame.
+
 ## Things I Might Do (Not Everything, but Alot with Simple Function Choices)
 
 - [ ] Interface UI Builder - make apps easier to make using GFX toolkit, perhaps some PROGMEM graphics images.
- - For example 5 buttons on a row at 42*9 box, 6 tiny chars with 2 pix border padding. 2 pix button horizontal outer padding
+  - For example 5 buttons on a row at 42*9 box, 6 tiny chars with 2 pix border padding. 2 pix button horizontal outer padding
     and 5 pix horizontal gap extra (4 of these gaps).
 - [X] Improve Edit Experience - `(edit 'func)` has arrows too (left, right and up tree) and `.` (cons prefix), `<backspace>` (delete), `(` (replace) and `<backtick>` (quit).
 - [ ] Help Dialogs.
