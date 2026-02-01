@@ -118,5 +118,4 @@
 (defun rgb (r g b)
   (logior (ash (logand r #xf8) 8) (ash (logand g #xfc) 3) (ash b -3)))
 
-; end - must follow by bracket, no bracket in comment so ...
-; ())lisplibrary";
+; ())lisplibrary";// end - must follow by bracket, no bracket in comment so ...
