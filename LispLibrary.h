@@ -104,6 +104,7 @@
 (defun asinh (x) (log (+ x (sqrt (1+ (* x x))))))
 (defun acosh (x) (log (+ x (sqrt (1- (* x x))))))
 (defun atanh (x) (/ (log (/ (1+ x) (- 1 x))) 2))
+(defvar pi (* 4 (atan 1)))
 
 ; List
 (defun reduce (op arg)

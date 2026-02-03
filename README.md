@@ -60,7 +60,7 @@ of a tail continuation, without an extra `eval` stack frame.
 - [ ] Key Input -  maybe a non-blocking keyboard read.
 - [ ] Sound - expand for more flexibility.
 - [X] Numbers - a few more number theoretic functions. For bignums and `(^ number*)` for floating point continued powers with a shorter name. Maybe `(nanp number)`.
-- [X] List Reduce - a `(rreduce 'op items*)` (right associative reduce) for any dyad operator with a `nil` parameter return of the reduction accumulator. As `(+)` does.
+- [X] List Reduce - a `(reduce 'op items*)` (right associative reduce) for any dyad operator with a `nil` parameter return of the reduction accumulator. As `(+)` does.
 - [ ] Calculus - a few more calculus functions.
 - [ ] Solver - some kind of variable solver.
 - [ ] Streams - maybe there's more. Audio.
