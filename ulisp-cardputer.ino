@@ -4393,8 +4393,9 @@ object *fn_listlibrary (object *args, object *env) {
   GlobalStringIndex = 0;
   object *line = readmain(glibrary);
   while (line != NULL) {
-    builtin_t bname = builtin(first(line)->name);
-    if (bname == DEFUN || bname == DEFVAR) {
+    // Is this a definition we want
+    symbol_t fname = first(line)->name;
+    if ((fname == sym(DEFUN) || fname == sym(DEFVAR)) && symbolp(second(line))) {
       printsymbol(second(line), pserial); pserial(' ');
     }
     line = readmain(glibrary);
