@@ -6815,13 +6815,15 @@ void ProcessKey (char c) {
       if (WritePtr) c = KybdBuf[WritePtr-1];
     }
   } else if (c == SHIFTRETURN) {
-    // BUG: when entering ( then delete it, then shift+enter, initial bracket from prvious is invisible?
-    // as set in buffer as 0x7f
+    for (int i = 0; i < WritePtr; i++) {// clear entry
+      WritePtr--;
+      Display(0x7F);
+    }
     for (int i = 0; i < LastWritePtr; i++) Display(KybdBuf[i]);
     WritePtr = LastWritePtr;
   } else if (c == 24) { // CAN
+    LastWritePtr = WritePtr;//remember for shift + enter
     for (int i = 0; i < WritePtr; i++) {// clear entry
-      LastWritePtr = WritePtr;//remember for shift + enter
       WritePtr--;
       Display(0x7F);
     }
