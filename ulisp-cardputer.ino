@@ -6586,11 +6586,12 @@ void ScrollDisplay () {
       Display(14);//end listing after one screen
       return;
     }
+    tft.invertDisplay(true);
     while(scrollLock) {// busy on scroll lock OPT key
       if(decodeKey()) break;// next page on key, without scroll lock release by ctrl + enter
-      delay(125);
       // don't "process" the key, so can't use gserial (no feed to lisp logic)
-    }  
+    }
+    tft.invertDisplay(false);
   }
   tft.fillRect(0, (Lines*Leading)-Leading, ScreenWidth, Leading, BLACK);
   for (uint8_t x = 0; x < Columns; x++) {
