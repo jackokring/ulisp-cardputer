@@ -203,7 +203,8 @@ char LastPrint = 0;
 void* StackBottom;
 
 // Flags
-enum flag { PRINTREADABLY, RETURNFLAG, ESCAPE, EXITEDITOR, LIBRARYLOADED, NOESC, NOECHO, MUFFLEERRORS, BACKTRACE };
+// NOECHO removed as seems to be an issue for me
+enum flag { PRINTREADABLY, RETURNFLAG, ESCAPE, EXITEDITOR, LIBRARYLOADED, NOESC, MUFFLEERRORS, BACKTRACE };
 typedef uint16_t flags_t;
 flags_t Flags = 1<<PRINTREADABLY |  1<<EXITEDITOR; // Set by default
 
@@ -6307,7 +6308,7 @@ object *eval (object *form, object *env) {
 
 void pserial (char c) {
   LastPrint = c;
-  if (!tstflag(NOECHO)) Display(c);         // Don't display when paste in listing
+  Display(c);         // display when paste in listing
   #if defined (serialmonitor)
   if (c == '\n') Serial.write('\r');
   Serial.write(c);
@@ -6894,12 +6895,10 @@ void gserial_flush () {
 
 int gserial () {
   #if defined (serialmonitor)
-  unsigned long start = millis();
   while (!KybdAvailable) {
-    if (millis() - start > 1000) clrflag(NOECHO);
     if (Serial.available()) {
       char temp = Serial.read();
-      if (temp != '\n' && !tstflag(NOECHO)) Serial.print(temp);
+      if (temp != '\n') Serial.print(temp);
       return temp;
     } else {
       M5Cardputer.update();
@@ -6945,7 +6944,7 @@ object *nextitem (gfun_t gfun) {
   while(issp(ch)) ch = gfun();
 
   if (ch == ';') {
-    do { ch = gfun(); if (ch == ';' || ch == '(') setflag(NOECHO); }
+    do { ch = gfun(); }
     while(ch != '(');
   }
   if (ch == '\n') ch = gfun();
@@ -7160,7 +7159,7 @@ void repl (object *env) {
   for (;;) {
     randomSeed(micros());
     #if defined(printfreespace)
-    if (!tstflag(NOECHO)) gc(NULL, env);
+    gc(NULL, env);
     pint(Freespace+1, pserial);// 2026-01-30 where's the 1st > ?
     #endif
     if (BreakLevel) {
@@ -7218,7 +7217,6 @@ void ulisperror () {
   #endif
   #if defined(lisplibrary)
   if (!tstflag(LIBRARYLOADED)) { setflag(LIBRARYLOADED); loadfromlibrary(NULL); }
-  clrflag(NOECHO);// maybe from some stream thing load library (defun from char* but no print?)
   #endif
   client.stop();
 }
