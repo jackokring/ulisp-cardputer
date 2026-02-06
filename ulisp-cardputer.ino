@@ -6667,7 +6667,7 @@ void Display (char c) {
       line--; column = LastColumn;
     } else column--;
   } else if ((c & 0x7f) >= 32) {   // Normal character
-    if (invert) PlotChar(c ^ 0x80, line, column++); else PlotChar(c, line, column++);
+    PlotChar(c ^ (invert ? 0x80 : 0), line, column++);
     if (column > LastColumn) {
       column = 0;
       if (line == LastLine) ScrollDisplay(); else line++;
@@ -6709,16 +6709,17 @@ void Display (char c) {
 
 char decodeKey () {
   Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
+  char n = status.alt ? 0x80: 0;// inverse
   // Cardputer lisp keys chosen
   for (auto i : status.word) {
     if(i == '[') i = '('; else if(i == ']') i = ')';
     else if(i == '(') i = '['; else if(i == ')') i = ']';
     else if(i == '|') i = '\\'; else if(i == '\\') i = '|';//ctrl applies shift pattern
     // so gets ^\ decoding
-    if (status.ctrl && i > 31) return i - 64;
+    if (status.ctrl && i > 31) return ((i - 64) & 0x7f) | n;// ^?
     else if(status.fn && i == 96) return 27;// ESC
     else if(status.fn && i == '\b') return 0x7f;// DEL
-    else return i;
+    else return i | n;
   }
   if (status.enter && status.shift) return 26; // For echo last line SUB
   if (status.enter && status.ctrl) {
@@ -6726,7 +6727,7 @@ char decodeKey () {
     return 0;
   }
   if (status.enter) return '\n';
-  if (status.del) return 8;
+  if (status.del) return '\b';
   if (status.tab) return '\t';
   return 0; // NUL ok none
 }
