@@ -1970,8 +1970,41 @@ void WiFiwrite (char c) { client.write(c); }
 File SDpfile, SDgfile;
 void SDwrite (char c) { SDpfile.write(c); }
 #endif
+
+// apparently the 437-ish font is off at 0xb2
+const char xtra[32] PROGMEM = {// and a selct 32
+  0xe5, 0xe9, 0xe2, 0xe4, // Mu, Ohm, pi, sigma
+  0xf7, 0xfa, 0xf9, 0xfd, // degree, root, dot, square 
+  0x01, 0x02, 0x0b, 0x0c, // faces and sexes
+  0xae, 0xaf, 0xb0, 0xda, // german brackets, half tone, filled
+
+  0x03, 0x04, 0x05, 0x06, // suits
+  0xde, 0xdb, 0xdd, 0xdc, // NSEW - filled halves
+  0x1e, 0x1f, 0x10, 0x11, // NSEW - point arrows
+  0x18, 0x19, 0x1a, 0x1b  // NSEW - point arrow 2
+};
+
 #if defined(gfxsupport)
-void gfxwrite (char c) { tft.write(c); }
+void gfxwrite (char c) {
+  auto ts = tft.getTextStyle();
+  bool flip = false;
+  if (c > 127) {
+    c &= 0x7f;
+    if(c < 32) c = xtra[c];
+    else {
+      auto tmp = ts.fore_rgb888;
+      ts.fore_rgb888 = ts.back_rgb888;
+      ts.back_rgb888 = tmp;
+      flip = true;
+    }
+  }
+  tft.write(c);
+  if (flip) {
+    auto tmp = ts.fore_rgb888;
+    ts.fore_rgb888 = ts.back_rgb888;
+    ts.back_rgb888 = tmp;
+  }
+}
 #endif
 
 int spiread () { return SPI.transfer(0); }
@@ -6564,18 +6597,6 @@ uint8_t Scroll = 0;
 
 // Terminal **********************************************************************************
 
-const char xtra[32] = {// and a selct 32
-  0xe5, 0xe9, 0xe2, 0xe4, // Mu, Ohm, pi, sigma
-  0xf7, 0xfa, 0xae, 0xaf, // degree, root, german brackets
-  0x1e, 0x1f, 0x10, 0x11, // NSEW - point arrows
-  0x18, 0x19, 0x1a, 0x1b, // NSEW - point arrow 2
-  
-  0x01, 0x02, 0x0b, 0x0c, // faces and sexes
-  //
-  //
-  //
-};
-
 // Plot character at absolute character cell position
 void PlotChar (uint8_t ch, uint8_t line, uint8_t column) {
  #if defined(gfxsupport)
@@ -6584,6 +6605,7 @@ void PlotChar (uint8_t ch, uint8_t line, uint8_t column) {
   ScrollBuf[column][(line+Scroll) % Lines] = ch;
   char i = ch & 0x7f;
   if (ch & 0x80) {
+    // more interesting code page usage
     if (i < 32) tft.drawChar(x, y, xtra[i], BLACK, WHITE, 1);
     else tft.drawChar(x, y, i, GREEN, BLACK, 1); // On Cardputer colour and bg wrong way round
   } else {
