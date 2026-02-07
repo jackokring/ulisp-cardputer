@@ -17,6 +17,7 @@
 #define gfxsupport
 #define lisplibrary
 #define extensions
+#define sfxsupport
 // #define largerfont
 
 // Includes
@@ -1969,6 +1970,40 @@ void WiFiwrite (char c) { client.write(c); }
 #if defined(sdcardsupport)
 File SDpfile, SDgfile;
 void SDwrite (char c) { SDpfile.write(c); }
+#endif
+
+#if defined(sfxsupport)
+TaskHandle_t audio_handle = NULL;
+SemaphoreHandle_t audio_mutex = NULL;
+StaticSemaphore_t mutex_buf;
+
+// sound effect process volatiles
+
+void audio_task(void *para) {
+  static const int buf_size = 4096;
+  static uint8_t buf[buf_size];
+  static int blk_size = buf_size / 4;
+  static uint32_t count = 0;
+   
+  for(int b = 0; ; b = (b + 1) & 3) {
+    auto blk = buf + blk_size * b;
+    // calc
+    while(xSemaphoreTake(audio_mutex, 1 / portTICK_PERIOD_MS) != pdTRUE);
+    for(int i = 0; i < blk_size; ++i) {
+      blk[i] = count % 99;// generator function
+      ++count;
+    }
+    xSemaphoreGive(audio_mutex);
+    // que and suspend if busy?
+    M5Cardputer.Speaker.playRAW(blk, blk_size, 22050, 1, 0);// channel zero auto play
+  }
+}
+
+void audio_set(int para, int val) {// priority given to generate task as sloppy tweeking OK.
+  while(xSemaphoreTake(audio_mutex, 10 / portTICK_PERIOD_MS) != pdTRUE);
+  // set audio parameter
+  xSemaphoreGive(audio_mutex);
+}
 #endif
 
 // apparently the 437-ish font is off at 0xb2
@@ -7192,6 +7227,17 @@ void setup () {
   initgfx();
   // append k for jackokring version
   pfstring(PSTR("uLisp 4.8fk "), pserial); pln(pserial);
+#if defined(sfxsupport)
+  audio_mutex = xSemaphoreCreateMutexStatic(&mutex_buf);
+  xTaskCreatePinnedToCore(
+    audio_task,
+    "audio",
+    4096,// 4k stack
+    NULL,
+    3,// high priority?
+    &audio_handle,
+    1);
+#endif
 }
 
 // Read/Evaluate/Print loop
