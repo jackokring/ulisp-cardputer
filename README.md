@@ -51,7 +51,8 @@ of a tail continuation, without an extra `eval` stack frame.
 - [ ] Help Dialogs.
 - [X] Scroll Lock - `ctrl` + `enter`(like last line given by `shift`+ `enter`). Use any key to continue scrolling another page if scroll is locked.
 - [X] Keyboard - swap `()` and `[]` as lisp. Also `\` with `|` for arcane CS reasons and CTRL "causing" a SHIFT for `^\` (and `^[` on 9, not synthetic `ESC`).
-- [ ] Maybe add some uses for `<backtick>`, `ctrl`, `alt`, `opt`and `fn`.
+- [ ] Maybe add some uses for `<backtick>`, `ctrl`, `opt`and `fn`.
+- [X] Inverted Character Key - `Alt`for inverted characters.
 - [ ] SI/SO Functions - maybe some others too to easily access some console control.
 - [ ] `directory` - the card is 8 GB. Is `cd`reasonable?
 - [ ] Color Keywords - improving mental parsing, and real pretty printing.

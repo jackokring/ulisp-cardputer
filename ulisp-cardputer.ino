@@ -6564,16 +6564,30 @@ uint8_t Scroll = 0;
 
 // Terminal **********************************************************************************
 
+const char xtra[32] = {// and a selct 32
+  0xe5, 0xe9, 0xe2, 0xe4, // Mu, Ohm, pi, sigma
+  0xf7, 0xfa, 0xae, 0xaf, // degree, root, german brackets
+  0x1e, 0x1f, 0x10, 0x11, // NSEW - point arrows
+  0x18, 0x19, 0x1a, 0x1b, // NSEW - point arrow 2
+  
+  0x01, 0x02, 0x0b, 0x0c, // faces and sexes
+  //
+  //
+  //
+};
+
 // Plot character at absolute character cell position
 void PlotChar (uint8_t ch, uint8_t line, uint8_t column) {
  #if defined(gfxsupport)
   uint16_t y = line*Leading;
   uint16_t x = column*CharWidth;
   ScrollBuf[column][(line+Scroll) % Lines] = ch;
+  char i = ch & 0x7f;
   if (ch & 0x80) {
-    tft.drawChar(x, y, ch & 0x7f, GREEN, BLACK, 1); // On Cardputer colour and bg wrong way round
+    if (i < 32) tft.drawChar(x, y, xtra[i], BLACK, WHITE, 1);
+    else tft.drawChar(x, y, i, GREEN, BLACK, 1); // On Cardputer colour and bg wrong way round
   } else {
-    tft.drawChar(x, y, ch & 0x7f, BLACK, WHITE, 1);
+    tft.drawChar(x, y, i, BLACK, WHITE, 1);
   }
 #endif
 }
