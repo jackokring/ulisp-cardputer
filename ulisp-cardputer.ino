@@ -1981,9 +1981,24 @@ StaticSemaphore_t mutex_buf;
 enum sfxpara { A_COUNT, A_MAX };
 int apara[A_MAX] = { 0 };
 
+// fixed point and truncate
+int32_t inline lmul(int32_t a, int32_t b) {
+  int64_t t = a * b;
+  return (int32_t)(t >> 32);
+}
+
+int32_t lmod(int32_t a, int32_t b) {
+  if (b > 0) return a % b;
+  else return a % (1 - b);// singular avoid and also ... MININT ... 
+}
+
+int16_t inline chop(int32_t a) {
+  return (int16_t)(a >> 16);
+}
+
 void audio_task(void *para) {
   static const int buf_size = 4096;
-  static uint8_t buf[buf_size];
+  static int16_t buf[buf_size];
   static int blk_size = buf_size / 4;
    
   for(int b = 0; ; b = (b + 1) & 3) {
