@@ -1989,14 +1989,14 @@ void gfxwrite (char c) {
   auto ts = tft.getTextStyle();
   bool flip = false;
   if (c > 127) {
-    c &= 0x7f;
-    if(c < 32) c = xtra[c];
-    else {
-      auto tmp = ts.fore_rgb888;
-      ts.fore_rgb888 = ts.back_rgb888;
-      ts.back_rgb888 = tmp;
-      flip = true;
-    }
+    flip = true;
+  }
+  c &= 0x7f;
+  if(c < 32) { c = xtra[c]; flip = !flip; }
+  if (flip)  {
+    auto tmp = ts.fore_rgb888;
+    ts.fore_rgb888 = ts.back_rgb888;
+    ts.back_rgb888 = tmp;
   }
   tft.write(c);
   if (flip) {
@@ -6712,7 +6712,8 @@ void Display (char c) {
   } else if(c == 1) { // Home SOH
     column = 0; Scroll = 0; line = 0;
   } else if (c == 12) {            // Clear display FF
-    tft.fillScreen(BLACK); line = 0; column = 0; Scroll = 0; line = 0;
+    initgfx();
+    line = 0; column = 0; Scroll = 0; line = 0;
     for (int col = 0; col < Columns; col++) {
       for (int row = 0; row < Lines; row++) {
         ScrollBuf[col][row] = 0;
@@ -7171,9 +7172,11 @@ void initgfx () {
   M5Cardputer.Display.setRotation(1);
   M5Cardputer.Display.clearDisplay(BLACK);
   #if defined(largerfont)
+  M5Cardputer.Display.setTextSize(1.0);
   M5Cardputer.Display.setFont(&fonts::AsciiFont8x16);
   #else
   M5Cardputer.Display.setTextSize(0.5);
+  M5Cardputer.Display.setFont(&fonts::Font0);
   #endif
 }
 
