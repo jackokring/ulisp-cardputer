@@ -1987,9 +1987,17 @@ int32_t inline lmul(int32_t a, int32_t b) {
   return (int32_t)(t >> 32);
 }
 
-int32_t lmod(int32_t a, int32_t b) {
-  if (b > 0) return a % b;
-  else return a % (1 - b);// singular avoid and also ... MININT ... 
+int32_t lmod(int32_t a, int32_t b, bool norm = false) {
+  int32_t t, t2;
+  if (b > 0) t = a % (t2 = b);
+  else t = (~a) % (t2 = (1 - b));// singular avoid and also ... MININT ... 
+  //so given a controls result sign for fixed b
+  //and b approx does result sign for fixed a ...
+  //audio crossmix is best like this
+  if(norm) {
+    t = lmul(t, 0x7fffffff / t2);//rescale
+  }
+  return t;
 }
 
 int16_t inline chop(int32_t a) {
