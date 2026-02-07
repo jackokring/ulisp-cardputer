@@ -1977,21 +1977,24 @@ TaskHandle_t audio_handle = NULL;
 SemaphoreHandle_t audio_mutex = NULL;
 StaticSemaphore_t mutex_buf;
 
-// sound effect process volatiles
+// sound effect process parameters
+enum sfxpara { A_COUNT, A_MAX };
+int apara[A_MAX] = { 0 };
 
 void audio_task(void *para) {
   static const int buf_size = 4096;
   static uint8_t buf[buf_size];
   static int blk_size = buf_size / 4;
-  static uint32_t count = 0;
    
   for(int b = 0; ; b = (b + 1) & 3) {
     auto blk = buf + blk_size * b;
     // calc
     while(xSemaphoreTake(audio_mutex, 1 / portTICK_PERIOD_MS) != pdTRUE);
     for(int i = 0; i < blk_size; ++i) {
-      blk[i] = count % 99;// generator function
-      ++count;
+      // generator function
+      blk[i] = apara[A_COUNT] % 99;
+      // then increase count
+      ++apara[A_COUNT];
     }
     xSemaphoreGive(audio_mutex);
     // que and suspend if busy?
@@ -2002,7 +2005,16 @@ void audio_task(void *para) {
 void audio_set(int para, int val) {// priority given to generate task as sloppy tweeking OK.
   while(xSemaphoreTake(audio_mutex, 10 / portTICK_PERIOD_MS) != pdTRUE);
   // set audio parameter
+  apara[para] = val;
   xSemaphoreGive(audio_mutex);
+}
+
+int audio_get(int para) {// priority given to generate task as sloppy tweeking OK.
+  while(xSemaphoreTake(audio_mutex, 10 / portTICK_PERIOD_MS) != pdTRUE);
+  // get audio parameter
+  int val = apara[para];
+  xSemaphoreGive(audio_mutex);
+  return val;
 }
 #endif
 
