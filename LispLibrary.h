@@ -72,7 +72,7 @@
 (defun forget (x)
   (do
     ((g (globals) (cdr g))
-     (f (search '(x) (globals))))
+     (f (search (list x) (globals))))
     ((or (null f) (null x) (eq x (car g))) x)
     (makunbound (car g))))
 
