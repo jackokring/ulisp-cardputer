@@ -71,10 +71,10 @@
     (pprintall s)))
 (defun forget (x)
   (do
-    ((g (globals) (cdr g))
-     (f (search (list x) (globals))))
-    ((or (null f) (null x) (eq x (car g))) x)
-    (makunbound (car g))))
+    ((g (globals) (rest g))
+     (f (member x (globals))))
+    ((or (null f) (null x) (eq x (first g))) x)
+    (makunbound (first g))))
 
 ; String
 (defun concat (&rest args)
@@ -86,7 +86,7 @@
 ; Float
 (defun ^ (n &rest e)
   (loop
-    (if e (setq n (expt n (car e)) e (cdr e))
+    (if e (setq n (expt n (first e)) e (rest e))
       (return n))))
 (defun nanp (x) (/= x x))
 (defun rational (x)
@@ -118,8 +118,8 @@
 ; so semi-second class defun
 (defun reduce (op arg)
     (do (
-      (a (op) (funcall op (car l) a))
-      (l (reverse arg) (cdr l)))
+      (a (funcall op) (funcall op (first l) a))
+      (l (reverse arg) (rest l)))
     ((null l) a)))
 
 ; [y [lamdda [f] [lambda [args] [... f/args ...]]] args]
