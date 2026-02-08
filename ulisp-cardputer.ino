@@ -1976,9 +1976,19 @@ void SDwrite (char c) { SDpfile.write(c); }
 TaskHandle_t audio_handle = NULL;
 SemaphoreHandle_t audio_mutex = NULL;
 StaticSemaphore_t mutex_buf;
+const int32_t a_one = 1 << 16;
 
 // sound effect process parameters
-enum sfxpara { A_COUNT, A_MAX };
+enum sfxpara {
+  A_P,// phase
+  A_F,// frequency
+  A_A,// amplitude
+  A_FL, // frequency limit
+  A_AL, // amplitude limit
+  A_FD, // frequency drify
+  A_AD, // amplitude drift
+  A_MAX
+  };
 int apara[A_MAX] = { 0 };
 
 // fixed point and truncate
@@ -1987,7 +1997,7 @@ int32_t inline lmul(int32_t a, int32_t b) {
   return (int32_t)(t >> 32);
 }
 
-int32_t lmod(int32_t a, int32_t b, bool norm = false) {
+/* int32_t lmod(int32_t a, int32_t b, bool norm = false) {
   int32_t t, t2;
   if (b > 0) t = a % (t2 = b);
   else t = (~a) % (t2 = (1 - b));// singular avoid and also ... MININT ... 
@@ -1998,7 +2008,7 @@ int32_t lmod(int32_t a, int32_t b, bool norm = false) {
     t = lmul(t, 0x7fffffff / t2);//rescale
   }
   return t;
-}
+} */
 
 int16_t inline chop(int32_t a) {
   return (int16_t)(a >> 16);
@@ -2015,9 +2025,17 @@ void audio_task(void *para) {
     while(xSemaphoreTake(audio_mutex, 1 / portTICK_PERIOD_MS) != pdTRUE);
     for(int i = 0; i < blk_size; ++i) {
       // generator function
-      blk[i] = apara[A_COUNT] % 99;
-      // then increase count
-      ++apara[A_COUNT];
+      blk[i] = chop(lmul(apara[A_P], apara[A_A]));
+      // then increase phase
+      apara[A_P] += apara[A_F];
+      // amplitude decay or to limit
+      if(apara[A_AD] > 0) {
+        apara[A_A] = apara[A_AL] - lmul(apara[A_AL] - apara[A_A], apara[A_AD]);
+      } else apara[A_A] = lmul(apara[A_A], 1 - apara[A_AD]);
+      // frequency decay or to limit
+      if(apara[A_FD] > 0) {
+        apara[A_F] = apara[A_FL] - lmul(apara[A_FL] - apara[A_F], apara[A_FD]);
+      } else apara[A_F] = lmul(apara[A_F], 1 - apara[A_FD]);
     }
     xSemaphoreGive(audio_mutex);
     // que and suspend if busy?
@@ -7263,7 +7281,7 @@ void setup () {
   // append k for jackokring version
   pfstring(PSTR("uLisp 4.8fk "), pserial); pln(pserial);
 #if defined(sfxsupport)
-  audio_mutex = xSemaphoreCreateMutexStatic(&mutex_buf);
+  audio_mutex = xSemaphoreCreateRecursiveMutexStatic(&mutex_buf);
   xTaskCreatePinnedToCore(
     audio_task,
     "audio",
