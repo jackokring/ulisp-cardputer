@@ -119,6 +119,12 @@
       (l (reverse arg) (cdr l)))
     ((null l) a)))
 
+; [y [lamdda [f] [lambda [args] [... f/args ...]]] args]
+(defun y (f)
+  ((lambda (x) (funcall x x)))
+   (lambda (x)
+     (funcall f (lambda (&rest args) (apply (funcall x x) args)))))
+
 ; Platform
 (defun gfx () (write-byte 14))
 (defun cli () (write-byte 15))
