@@ -29,7 +29,7 @@
 
   <metadata>
     <property name="mimetypes">text/x-u-lisp</property>
-    <property name="globs">*.h</property>
+    <property name="globs">*.h;*.ulisp</property>
     <property name="line-comment-start">;</property>
     <property name="block-comment-start">#\|</property>
     <property name="block-comment-end">\|#</property>

@@ -14,13 +14,13 @@
 (defun value (obj slot)
   (when (symbolp obj) (setq obj (eval obj)))
   (let ((pair (assoc slot obj)))
-    (if pair (cdr pair)
-           (let ((p (cdr (assoc 'parent obj))))
+    (if pair (rest pair)
+           (let ((p (rest (assoc 'parent obj))))
              (and p (value p slot))))))
 (defun update (obj slot value)
   (when (symbolp obj) (setq obj (eval obj)))
   (let ((pair (assoc slot obj)))
-    (when pair (setf (cdr pair) value))))
+    (when pair (setf (rest pair) value))))
 
 ; Bignum
 (defun $expt (x y)
