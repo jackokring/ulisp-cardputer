@@ -1976,10 +1976,10 @@ void SDwrite (char c) { SDpfile.write(c); }
 TaskHandle_t audio_handle = NULL;
 SemaphoreHandle_t audio_mutex = NULL;
 StaticSemaphore_t mutex_buf;
+
 float clamp(float in) { return fmax(-1.0f, fmin(1.0f, in)); }
 
 // sound effect process parameters
-enum sfxkind { A_LIN, A_FREQ, A_TIME, A_POW, A_KINDMAX };
 
 int32_t a_lin(float in) {
   return (int32_t)(in * ((1 << 31) - 1));
@@ -1999,9 +1999,15 @@ enum sfxpara {
   A_AD, // amplitude drift
   A_MAX
   };
+
 int32_t apara[A_MAX] = { 0 };
-int32_t (*a_map[A_MAX])(float in) = { a_lin };
-float (*a_unmap[A_MAX])(int32_t in) = { au_lin };
+
+int32_t (*const a_map[A_MAX])(float in) = {
+  a_lin,
+};
+float (*const a_unmap[A_MAX])(int32_t in) = {
+  au_lin
+};
 
 // fixed point and truncate
 int32_t inline lmul(int32_t a, int32_t b) {
@@ -2056,7 +2062,7 @@ void audio_task(void *para) {
 }
 
 void audio_set(int para, float val) {// priority given to generate task as sloppy tweeking OK.
-  int32_t t = a_map[para](val);
+  int32_t t = a_map[para % A_MAX](val);
   while(xSemaphoreTake(audio_mutex, 10 / portTICK_PERIOD_MS) != pdTRUE);
   // set audio parameter
   apara[para] = t;
@@ -2068,7 +2074,7 @@ int audio_get(int para) {// priority given to generate task as sloppy tweeking O
   // get audio parameter
   int val = apara[para];
   xSemaphoreGive(audio_mutex);
-  return a_unmap[para](val);
+  return a_unmap[para % A_MAX](val);
 }
 #endif
 
