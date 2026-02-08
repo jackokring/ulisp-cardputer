@@ -115,15 +115,15 @@
 ; List
 (defun reduce (op arg)
     (do (
-      (a (funcall op) (funcall op (car l) a))
+      (a (op) (op (car l) a))
       (l (reverse arg) (cdr l)))
     ((null l) a)))
 
 ; [y [lamdda [f] [lambda [args] [... f/args ...]]] args]
 (defun y (f)
-  ((lambda (x) (funcall x x)))
+  ((lambda (x) (x x)))
    (lambda (x)
-     (funcall f (lambda (&rest args) (apply (funcall x x) args)))))
+     (f (lambda (&rest args) (apply (x x) args)))))
 
 ; Platform
 (defun gfx () (write-byte 14))
