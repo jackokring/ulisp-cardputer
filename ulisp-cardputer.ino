@@ -1976,9 +1976,19 @@ void SDwrite (char c) { SDpfile.write(c); }
 TaskHandle_t audio_handle = NULL;
 SemaphoreHandle_t audio_mutex = NULL;
 StaticSemaphore_t mutex_buf;
-const int32_t a_one = 1 << 16;
+float clamp(float in) { return fmax(-1.0f, fmin(1.0f, in)); }
 
 // sound effect process parameters
+enum sfxkind { A_LIN, A_FREQ, A_TIME, A_POW, A_KINDMAX };
+
+int32_t a_lin(float in) {
+  return (int32_t)(in * ((1 << 31) - 1));
+}
+
+float au_lin(int32_t in) {
+  return ((float)in) * (1 / ((1 << 31) - 1));
+}
+
 enum sfxpara {
   A_P,// phase
   A_F,// frequency
@@ -1989,7 +1999,9 @@ enum sfxpara {
   A_AD, // amplitude drift
   A_MAX
   };
-int apara[A_MAX] = { 0 };
+int32_t apara[A_MAX] = { 0 };
+int32_t (*a_map[A_MAX])(float in) = { a_lin };
+float (*a_unmap[A_MAX])(int32_t in) = { au_lin };
 
 // fixed point and truncate
 int32_t inline lmul(int32_t a, int32_t b) {
@@ -2030,11 +2042,11 @@ void audio_task(void *para) {
       apara[A_P] += apara[A_F];
       // amplitude decay or to limit
       if(apara[A_AD] > 0) {
-        apara[A_A] = apara[A_AL] - lmul(apara[A_AL] - apara[A_A], apara[A_AD]);
+        apara[A_A] = lmul(apara[A_A] - apara[A_AL], apara[A_AD]) + apara[A_AL];
       } else apara[A_A] = lmul(apara[A_A], 1 - apara[A_AD]);
       // frequency decay or to limit
       if(apara[A_FD] > 0) {
-        apara[A_F] = apara[A_FL] - lmul(apara[A_FL] - apara[A_F], apara[A_FD]);
+        apara[A_F] = lmul(apara[A_F] - apara[A_FL], apara[A_FD]) + apara[A_FL];
       } else apara[A_F] = lmul(apara[A_F], 1 - apara[A_FD]);
     }
     xSemaphoreGive(audio_mutex);
@@ -2043,10 +2055,11 @@ void audio_task(void *para) {
   }
 }
 
-void audio_set(int para, int val) {// priority given to generate task as sloppy tweeking OK.
+void audio_set(int para, float val) {// priority given to generate task as sloppy tweeking OK.
+  int32_t t = a_map[para](val);
   while(xSemaphoreTake(audio_mutex, 10 / portTICK_PERIOD_MS) != pdTRUE);
   // set audio parameter
-  apara[para] = val;
+  apara[para] = t;
   xSemaphoreGive(audio_mutex);
 }
 
@@ -2055,7 +2068,7 @@ int audio_get(int para) {// priority given to generate task as sloppy tweeking O
   // get audio parameter
   int val = apara[para];
   xSemaphoreGive(audio_mutex);
-  return val;
+  return a_unmap[para](val);
 }
 #endif
 
