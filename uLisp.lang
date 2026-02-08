@@ -50,6 +50,7 @@
     <style id="special"             name="Special"             map-to="def:type"/>
     <style id="string"              name="String"              map-to="def:string"/>
     <style id="symbol"              name="Symbol"              map-to="def:identifier"/>
+    <style id="lisp-library"        name="Library Function"    map-to="def:function"/>
   </styles>
 
   <default-regex-options case-sensitive="false"/>
@@ -485,6 +486,56 @@
       <keyword>zerop</keyword>
     </context>
 
+    <!--
+      Functions in a uLisp Library
+      The following identifiers are symbols in the uLisp LispLibrary.h file,
+      and in the Bignums.ino file.
+    -->
+
+    <context id="lisplibrary" style-ref="lisp-library">
+      <keyword>\$bignum</keyword>
+      <keyword>\$integer</keyword>
+      <keyword>\$bignum-string</keyword>
+      <keyword>\$string-bignum</keyword>
+      <keyword>\$zerop</keyword>
+      <keyword>\$+</keyword>
+      <keyword>\$-</keyword>
+      <keyword>\$*</keyword>
+      <keyword>\$/</keyword>
+      <keyword>\$mod</keyword>
+      <keyword>\$=</keyword>
+      <keyword>\$&lt;</keyword>
+      <keyword>\$&gt;</keyword>
+      <keyword>\$logand</keyword>
+      <keyword>\$logior</keyword>
+      <keyword>\$logxor</keyword>
+      <keyword>\$ash</keyword>
+      <keyword>object</keyword>
+      <keyword>value</keyword>
+      <keyword>update</keyword>
+      <keyword>\$expt</keyword>
+      <keyword>\$sqrt</keyword>
+      <keyword>\$gcd</keyword>
+      <keyword>\$pollard-rho</keyword>
+      <keyword>load-file</keyword>
+      <keyword>save-file</keyword>
+      <keyword>forget</keyword>
+      <keyword>concat</keyword>
+      <keyword>rjust</keyword>
+      <keyword>\^</keyword>
+      <keyword>nanp</keyword>
+      <keyword>rational</keyword>
+      <keyword>asinh</keyword>
+      <keyword>acosh</keyword>
+      <keyword>atanh</keyword>
+      <keyword>pi</keyword>
+      <keyword>reduce</keyword>
+      <keyword>y</keyword>
+      <keyword>gfx</keyword>
+      <keyword>cli</keyword>
+      <keyword>rgb</keyword>
+    </context> 
+
     <context id="boolean" style-ref="boolean">
       <keyword>nil</keyword>
       <keyword>t</keyword>
@@ -540,6 +591,7 @@
         <context ref="block-comment"/>
         <context ref="boolean"/>
         <context ref="builtin"/>
+        <context ref="lisplibrary"/>
         <context ref="character"/>
         <context ref="constant-variable"/>
         <context ref="decimal-rational"/>
