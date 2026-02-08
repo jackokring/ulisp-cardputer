@@ -69,6 +69,12 @@
 (defun save-file (filename)
   (with-sd-card (s filename 2)
     (pprintall s)))
+(defun forget (x)
+  (do
+    ((g (globals) (cdr g))
+     (f (search '(x) (globals))))
+    ((or (null f) (null x) (eq x (car g))) x)
+    (makunbound (car g))))
 
 ; String
 (defun concat (&rest args)
