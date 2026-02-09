@@ -51,6 +51,12 @@
     <style id="string"              name="String"              map-to="def:string"/>
     <style id="symbol"              name="Symbol"              map-to="def:identifier"/>
     <style id="lisp-library"        name="Library Function"    map-to="def:function"/>
+    <style id="l1"                  name="Nest 1"              map-to="def:c1"/>
+    <style id="l2"                  name="Nest 2"              map-to="def:c2"/>
+    <style id="l3"                  name="Nest 3"              map-to="def:c3"/>
+    <style id="l4"                  name="Nest 4"              map-to="def:c4"/>
+    <style id="l5"                  name="Nest 5"              map-to="def:c5"/>
+    <style id="l6"                  name="Nest 6"              map-to="def:c6"/>
   </styles>
 
   <default-regex-options case-sensitive="false"/>
@@ -239,18 +245,6 @@
     <context id="sharpsign-asterisk" style-ref="constant">
       <match extended="true">
         (\#[0-9]*\*[01]*)
-      </match>
-    </context>
-
-    <!--
-      Sharpsign Colon (uninterned symbol)
-      Reference: http://www.lispworks.com/documentation/HyperSpec/Body/02_dhe.htm
-    -->
-
-    <context id="sharpsign-colon" style-ref="symbol">
-      <match extended="true">
-        (\#:\%{token})
-        \%{token-end}
       </match>
     </context>
 
@@ -608,7 +602,11 @@
       </match>
     </context>
 
-    <context id="ulisp" class="no-spell-check">
+    <context id="symbols" style-ref="symbol">
+      <match>(?&lt;![\w\d])[a-zA-Z0-9!$%&amp;*+./&lt;=&gt;?@^_~-]+</match>
+    </context>
+
+    <context id="everything" class="no-spell-check">
       <include>
         <context ref="binary-rational"/>
         <context ref="block-comment"/>
@@ -626,13 +624,73 @@
         <context ref="octal-rational"/>
         <context ref="radix-rational"/>
         <context ref="sharpsign-asterisk"/>
-        <context ref="sharpsign-colon"/>
         <context ref="sharpsign-invalid"/>
         <context ref="sharpsign-other"/>
         <context ref="single-quote"/>
         <context ref="special-variable"/>
         <context ref="string"/>
         <context ref="template-operators"/>
+        <context ref="symbols"/>
+      </include>
+    </context>
+
+    <context id="level1" style-ref="l1">
+      <start>\(</start> <end>\)</end>
+      <include>
+        <context ref="level2"/>
+        <context ref="everything"/>
+      </include>
+    </context>
+
+
+    <context id="level2" style-ref="l2">
+      <start>\(</start> <end>\)</end>
+      <include>
+        <context ref="level3"/>
+        <context ref="everything"/>
+      </include>
+    </context>
+
+
+    <context id="level3" style-ref="l3">
+      <start>\(</start> <end>\)</end>
+      <include>
+        <context ref="level4"/>
+        <context ref="everything"/>
+      </include>
+    </context>
+
+
+    <context id="level4" style-ref="l4">
+      <start>\(</start> <end>\)</end>
+      <include>
+        <context ref="level5"/>
+        <context ref="everything"/>
+      </include>
+    </context>
+
+
+    <context id="level5" style-ref="l5">
+      <start>\(</start> <end>\)</end>
+      <include>
+        <context ref="level6"/>
+        <context ref="everything"/>
+      </include>
+    </context>
+
+
+    <context id="level6" style-ref="l6">
+      <start>\(</start> <end>\)</end>
+      <include>
+        <context ref="level1"/>
+        <context ref="everything"/>
+      </include>
+    </context>
+
+    <context id="ulisp">
+      <include>
+        <context ref="level1"/>
+        <context ref="everything"/>
       </include>
     </context>
 

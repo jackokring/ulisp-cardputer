@@ -45,8 +45,15 @@ SOFTWARE.
 	<color name="orange" value="#ff9e64"/>
 	<color name="pink" value="#bb9af7"/>
 	<color name="purple" value="#7aa2f7"/>
-	<color name="red" value="#ff7768e"/>
+	<color name="red" value="#ff7768"/>
 	<color name="yellow" value="#e0af68"/>
+
+	<color name="c1" value="#444488"/>
+	<color name="c2" value="#448844"/>
+	<color name="c3" value="#448888"/>
+	<color name="c4" value="#884444"/>
+	<color name="c5" value="#884488"/>
+	<color name="c6" value="#888844"/>
 
 	<!-- Helper colors -->
 	<color name="white" value="#c0caf5"/>
@@ -63,17 +70,24 @@ SOFTWARE.
         <style name="background-pattern" background="current-line"/>
 
 
-	<style name="def:function" foreground="blue"/>
-	<style name="def:identifier" foreground="cyan"/>
+	<style name="def:function" foreground="dark-cyan"/>
+	<style name="def:identifier" foreground="purple"/>
 	<style name="def:keyword" foreground="pink"/>
 	<style name="def:number" foreground="orange" />
 	<style name="def:boolean" foreground="blue"/>
 	<style name="def:string" foreground="green"/>
 	<style name="def:special-char" foreground="pink"/>
 	<style name="def:builtin" foreground="cyan"/>
-	<style name="def:type" foreground="dark-cyan"/>
+	<style name="def:type" foreground="blue"/>
 	<style name="def:preprocessor" foreground="dark-cyan"/>
 	<style name="def:comment" foreground="comment"/>
+
+	<style name="def:c1" foreground="c1"/>
+	<style name="def:c2" foreground="c2"/>
+	<style name="def:c3" foreground="c3"/>
+	<style name="def:c4" foreground="c4"/>
+	<style name="def:c5" foreground="c5"/>
+	<style name="def:c6" foreground="c6"/>
 
 	<!-- Python-specific stuff -->
 	<style name="python:module-handler" foreground="pink"/>
