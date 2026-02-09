@@ -1972,6 +1972,8 @@ File SDpfile, SDgfile;
 void SDwrite (char c) { SDpfile.write(c); }
 #endif
 
+bool sfx_playing = false;
+
 #if defined(sfxsupport)
 TaskHandle_t audio_handle = NULL;
 SemaphoreHandle_t audio_mutex = NULL;
@@ -2015,19 +2017,6 @@ int32_t inline lmul(int32_t a, int32_t b) {
   return (int32_t)(t >> 32);
 }
 
-/* int32_t lmod(int32_t a, int32_t b, bool norm = false) {
-  int32_t t, t2;
-  if (b > 0) t = a % (t2 = b);
-  else t = (~a) % (t2 = (1 - b));// singular avoid and also ... MININT ... 
-  //so given a controls result sign for fixed b
-  //and b approx does result sign for fixed a ...
-  //audio crossmix is best like this
-  if(norm) {
-    t = lmul(t, 0x7fffffff / t2);//rescale
-  }
-  return t;
-} */
-
 int16_t inline chop(int32_t a) {
   return (int16_t)(a >> 16);
 }
@@ -2039,6 +2028,10 @@ void audio_task(void *para) {
    
   for(int b = 0; ; b = (b + 1) & 3) {
     auto blk = buf + blk_size * b;
+    if(!sfx_playing) {
+      vTaskDelay(10 / portTICK_PERIOD_MS);
+      continue;
+    }
     // calc
     while(xSemaphoreTake(audio_mutex, 1 / portTICK_PERIOD_MS) != pdTRUE);
     for(int i = 0; i < blk_size; ++i) {
@@ -2057,7 +2050,7 @@ void audio_task(void *para) {
     }
     xSemaphoreGive(audio_mutex);
     // que and suspend if busy?
-    M5Cardputer.Speaker.playRAW(blk, blk_size, 22050, 1, 0);// channel zero auto play
+    M5Cardputer.Speaker.playRAW(blk, blk_size, 22050, 1, 7);// channel 7 (sfx) auto play
   }
 }
 
@@ -2075,6 +2068,13 @@ int audio_get(int para) {// priority given to generate task as sloppy tweeking O
   int val = apara[para];
   xSemaphoreGive(audio_mutex);
   return a_unmap[para % A_MAX](val);
+}
+
+void audio_on(bool on) {
+  while(xSemaphoreTake(audio_mutex, 10 / portTICK_PERIOD_MS) != pdTRUE);
+  sfx_playing = on;
+  if(M5Cardputer.Speaker.isPlaying()) M5Cardputer.Speaker.stop(7);
+  xSemaphoreGive(audio_mutex);
 }
 #endif
 
@@ -2307,12 +2307,12 @@ void checkanalogwrite (int pin) {
 // Note
 
 void tone (int pin, int freq, uint16_t duration) {
-  M5Cardputer.Speaker.stop(pin & 7);
-  M5Cardputer.Speaker.tone(freq, duration, pin & 7);
+  M5Cardputer.Speaker.stop(pin % (sfx_playing? 6 : 7));
+  M5Cardputer.Speaker.tone(freq, duration, pin % (sfx_playing? 6 : 7));
 }
 
 void noTone (int pin) {
-  M5Cardputer.Speaker.stop(pin & 7);
+  M5Cardputer.Speaker.stop(pin % (sfx_playing? 6 : 7));
 }
 
 const int scale[] = {4186,4435,4699,4978,5274,5588,5920,6272,6645,7040,7459,7902};

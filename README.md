@@ -47,8 +47,8 @@ of a tail continuation, without an extra `eval` stack frame.
 ## Things I Might Do (Not Everything, but Alot with Simple Function Choices)
 
 - [ ] Interface UI Builder - make apps easier to make using GFX toolkit, perhaps some PROGMEM graphics images.
-  - For example 5 buttons on a row at 42*9 box, 6 tiny chars with 2 pix border padding. 2 pix button horizontal outer padding
-    and 5 pix horizontal gap extra (4 of these gaps).
+For example 5 buttons on a row at 42*9 box, 6 tiny chars with 2 pix border padding. 2 pix button horizontal outer padding
+and 5 pix horizontal gap extra (4 of these gaps).
 - [X] Improve Edit Experience - `(edit 'func)` has arrows too (left, right and up tree) and `.` (cons prefix), `<backspace>` (delete), `(` (replace) and `<backtick>` (quit).
 - [ ] Help Dialogs.
 - [X] Scroll Lock - `ctrl` + `enter`(like last line given by `shift`+ `enter`). Use any key to continue scrolling another page if scroll is locked.
@@ -69,7 +69,8 @@ of a tail continuation, without an extra `eval` stack frame.
 - [ ] Streams - maybe there's more. Audio.
 - [ ] Other Types - for rational and complex. Choice of natural R or P representation.
 - [X] ULOS Simple Object System.
-- [X] Octo-Sound. Use the "pin" number as the channel number. As the Cardputer otherwise doesn't use it. Octave becomes duration. Add `(* 12 octave)` to the note. **Clicky?**
+- [X] Octo-Sound. Use the "pin" number as the channel number. As the Cardputer otherwise doesn't use it. Octave becomes duration. Add `(* 12 octave)` to the note. **Clicky**?
+The first seven channels are used (0 to 6), with channel 7 generating sound effects (if enabled), or just notes.   
 
 ## Other M5Carputer Projects
 
