@@ -1,0 +1,403 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- saved from url=(0030)http://www.ulisp.com/show?31GT -->
+<html class="wf-roboto-n4-active wf-robotomedium-n4-active wf-robotobold-n4-inactive wf-active"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>uLisp - Graphics extensions</title>
+<link rel="stylesheet" type="text/css" href="./uLisp - Graphics extensions_files/program.css">
+<script src="./uLisp - Graphics extensions_files/webfont.js"></script>
+<link rel="stylesheet" href="./uLisp - Graphics extensions_files/css" media="all"><script>
+  WebFont.load({
+    google: {
+      families: ['Roboto', 'Roboto Medium', 'Roboto Bold']
+    }
+  });
+</script>
+<link rel="icon" type="image/x-icon" href="http://www.ulisp.com/pictures/3J/favicon.ico">
+<link rel="shortcut" type="image/x-icon" href="http://www.ulisp.com/pictures/3J/favicon.ico">
+<link rel="alternate" type="application/rss+xml" href="http://www.ulisp.com/rss?3J+3" title="uLisp Feed">
+</head>
+<body>
+<div id="container"><div id="navmenucontainer" class="wrap">
+<div id="navmenuv">
+    <ul class="nav">
+      <li><a href="http://www.ulisp.com/">Home</a></li>
+      <li><a href="http://www.ulisp.com/show?3L">Reference</a></li>
+      <li><a href="http://forum.ulisp.com/">Forum</a></li>
+    </ul>
+</div>
+</div><div id="header"><a href="http://www.ulisp.com/show?3J"><img src="./uLisp - Graphics extensions_files/logo.gif" alt="Logo" class="logo"></a>
+<h1 id="title">uLisp</h1>
+<div class="headernav">
+<div id="searchform">
+<form action="http://www.ulisp.com/search.html" method="post" enctype="application/x-www-form-urlencoded" class="searchform"><input type="text" name="find" size="20" maxlength="240" class="searchinput"><input type="hidden" name="id" value="3J">&nbsp;<input type="submit" name="q" value="Search" id="search"></form>
+</div>
+</div>
+</div>
+<div id="wiki">
+<div id="navigation">
+<div class="menu"><p>Getting started</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?3M">Lisp for microcontrollers</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?36M3">Performance</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?19XT">Using uLisp</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?34WV">Using uLisp from a terminal</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?41E0">Integral documentation</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1J1Z">Using the program editor</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?207M">SD card interface</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1EK4">I2C and SPI serial interfaces</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?27OV">Lisp Library</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1AA0">Download and install uLisp</a></li>
+<li><a href="http://library.ulisp.com/">uLisp Sensor Library</a></li>
+<li><a href="http://forum.ulisp.com/">Forum</a></li>
+</ul>
+<p>Debugging in uLisp</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?4ZMD">Error messages</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4XNK">Backtrace</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4ZJ7">Tracing functions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4ZJ4">Inserting breaks</a></li>
+</ul>
+<p>Self-contained Lisp computers</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?56ZO">PicoCalc uLisp Machine</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?52G4">Cardputer uLisp Machine</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4JAO">T-Deck uLisp Machine</a></li>
+<li><span style="color: #ff0000;"><a class="auto" href="http://www.ulisp.com/show?4JUS">Lisp Badge LE</a><br></span></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2L0C">Lisp Badge</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3I99">Pocket Op Amp Lab</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2KZH">Tiny Lisp Computer</a></li>
+</ul>
+<p>8/16-bit platforms</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?1LG8">Arduino Uno and Nano</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1LGA">Arduino Mega 2560</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1LGC">ATmega1284</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?33LO">ATmega4809 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3BMI">AVR DA and DB series boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?5B7I">AVR128DA32 Feather board</a></li>
+</ul>
+<p>32/64-bit platforms</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?29RK">Arduino M0 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2OFG">Adafruit M0 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3NRF">QT Py SAMD21 and XIAO SAMD21</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?59BV">Adafruit M0 Trinkeys</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2OH5">Adafruit M4 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?33OF">Adafruit PyGamer and PyBadge</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?38J4">Seeed Studio Wio Terminal</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2ZD1">Adafruit nRF52840 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1TZD">Circuit Playground Bluefruit</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4AT6">Seeed Studio XIAO nRF52840</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3CXJ">BBC Micro:bit and Calliope Mini</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2IN9">Maxim MAX32620FTHR</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?36VJ">Teensy 4.0 and 4.1</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3KN3">Raspberry Pi RP2040 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4UIB">Adafruit RP2040 Feather boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4B16">QT Py RP2040 and XIAO RP2040</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3JOX">LILYGO T-Display RP2040</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4X21">Raspberry Pi RP2350 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?58C2">Adafruit Feather RP2350 HSTX</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4YCF">Pimoroni RP2350 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?5CSS">Adafruit Fruit Jam</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4GBA">Arduino Uno R4 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4UGT">Adafruit ESP32 Feather boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4FKT">Adafruit QT Py ESP32 Pico</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2AJI">Other ESP32 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?583D">LILYGO LoRa32</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3TQF">ESP32-S2 and ESP-C3 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?5A5O">ESP32-S3 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?5AV5">ESP32-P4 boards</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?5ARJ">ESP32-C6 board</a></li>
+<li><span style="color: red;"><a class="auto" href="http://www.ulisp.com/show?5CDD">ESP32-C5 board</a></span></li>
+<li><a class="auto" href="http://www.ulisp.com/show?49WX">ESP32 boards with a TFT display</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?523F">Muse Lab ESP32 Keys</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?30X8">Sipeed MAiX RISC-V boards</a></li>
+</ul>
+<p>Simple examples</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?23YJ">Blinking primes</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1ANR">Tweetmaze</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1BFA">Mood light</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2RU3">LED 8x8 dot-matrix display</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1APD">Simon game</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1DO6">I2C clock</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1FCN">Data logging</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1G42">Ringing the changes</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1GEB">Driving DotStar RGB LEDs</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2B6A">LCD character display</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1GQS">DDS signal generator</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1Y4C">Temperature sensor</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2CYW">Simple data plotter</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2GYT">Thermocouple interface</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1EO1">Benchmarks</a></li>
+</ul>
+<p>Games</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?1LKX">Animals</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?240L">Eliza chatbot</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3OAZ">Simple arcade game</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3ONH">Simple maze game</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2Z78">Bulls &amp; Cows game</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?383X">Mini text adventure game</a></li>
+</ul>
+<p>Larger examples</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?1BM4">Route finder</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2D5X">Calculating with fractions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1FHA">Infinite precision arithmetic</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1QHW">Scrolling text display</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3AC6">Dot-matrix clock</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?23QU">Graphics display interface in Lisp</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2NSB">Plotting to a colour TFT display</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2UUG">GPS interface using uLisp</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2DT6">GPS mapping application</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2I60">Query language</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1Q0L">uLisp GSM server</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1XWL">A LoRaWAN node using uLisp</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2A61">Solving resistor networks</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?27ES">Fast Fourier Transform</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?33J9">Sudoku solver</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2L5B">Automatic uLisp to C converter</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4W2I">A Lisp compiler to ARM written in Lisp</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?5C9B">An extended version of the Lisp compiler</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4Y20">A Lisp compiler to RISC-V written in Lisp</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?37VY">Simple object system</a></li>
+</ul>
+<p>Graphics examples</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?2YRM">Graphics utilities</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?577T">GIF image decoder</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4FAI">Plotting the Hofstadter Q sequence</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3GPX">Surface of rotation</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2NWA">Ray tracing with uLisp</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?35SJ">Prime number spiral</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4JLZ">Dragon curve</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4JLN">Mandelbrot set</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?44WD">Barnsley Fern</a></li>
+</ul>
+<p>Wi-Fi examples</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?2B22">Wi-Fi examples</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?40X8">Wireless message display</a></li>
+</ul>
+<p>Assemblers</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?3IUO">AVR assembler overview</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3IUM">AVR assembler examples</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3JJQ">AVR NeoPixel driver using assembler</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2YRU">ARM assembler overview</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?30B8">ARM assembler instructions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?30BD">ARM assembler examples</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4ZBD">ARM assembler Thumb-2 extensions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3NXU">ARM NeoPixel driver using assembler</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?310Z">RISC-V assembler overview</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?30Z4">RISC-V assembler instructions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?30ZU">RISC-V assembler examples</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4Y5E">RISC-V assembler RP2350 extensions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?32VA">Mandelbrot set using assembler</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3HSN">Returning a floating-point result</a></li>
+</ul>
+<p>Tutorials</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?1AAO">Getting started</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1AC5">Lists</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1ACY">Expressions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1AGL">Defining functions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1AEK">Variables</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1LRV">Strings</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1AJM">Testing a result</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1AHT">Manipulating lists</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1B0R">Processing items in a list</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?19W8">Recursion</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1A6U">Returning functions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2I01">Lisp for C programmers</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2JNZ">Thinking in a Lispy way</a></li>
+</ul>
+<p>Reference</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?3L">Language reference</a></li>
+<li><a href="http://www.ulisp.com/show?3L#floating-point-functions">Floating-point functions</a></li>
+<li class="on"><a class="auto" href="http://www.ulisp.com/show?31GT">Graphics extensions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2B27">Wi-Fi extensions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3QQB">Programming AVR registers</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3R8W">Programming ARM registers</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1NNP">List of error messages</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4I7E">Preloading functions in uLisp</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3GSE">Adding useful functions to uLisp</a></li>
+</ul>
+<p>Implementation</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?1AWG">Implementation</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1BLW">Objects</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2YZ2">Symbols</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3GGR">Built-in symbols</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?5HIT">Numbers</a>&nbsp;<span style="caret-color: #ff0000; color: #ff0000;">New!</span></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1ERL">Strings</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3AHM">Arrays</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1DLD">Read, Evaluate, Print</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1BD3">Garbage collection</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?5837">Streams</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1BBP">Tail-call optimization</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1DTL">Saving and loading images</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4UKH">Extended RAM</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2Z88">Assembler and defcode</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4HP3">ARM assembler written in Lisp</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?19V2">Debugging uLisp</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?19Q4">Adding your own functions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2E0A">Converting between C and uLisp</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?2JZO">Porting uLisp to a new platform</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?3F07">uLisp Builder</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1OPZ">uLisp Zero</a></li>
+</ul>
+<p>uLisp extensions</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?19Q4">Adding your own functions</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?582Q">LoRa extension</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?282B">Arbitrary-precision arithmetic extension</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4GMV">NeoPixel extension</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?4WKE">T-Deck screen capture</a></li>
+</ul>
+<p>Other information</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?419N">FAQ</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1AA6">About me</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1DM5">Contact</a></li>
+<li><a class="auto" href="http://www.ulisp.com/show?1B83">Legal stuff</a></li>
+</ul>
+<p>RSS Feed</p>
+<p><a href="http://www.ulisp.com/rss?1DQ5">uLisp news!</a></p></div>
+</div>
+<div id="colophon"></div>
+<div id="content">
+<h2>Graphics extensions</h2>
+<p>This page lists the graphics extensions available in the ARM, ESP, and RISC-V versions of uLisp. The current releases of uLisp include built-in support for the graphics extensions with the displays on the following boards:</p>
+<ul>
+<li><a class="auto" href="http://www.ulisp.com/show?33OF">Adafruit PyGamer and PyBadge</a>&nbsp;(160 x 128)</li>
+<li><a href="http://www.ulisp.com/show?49WX">ESP32 boards with a TFT display</a>&nbsp;(240 x 135)</li>
+<li><a href="http://www.ulisp.com/show?3JOX">LILYGO T-Display RP2040</a>&nbsp;(240 x 135)</li>
+<li><a href="http://www.ulisp.com/show?2BLF">Adafruit Clue</a>&nbsp;(240 x 240)</li>
+<li><a class="auto" href="http://www.ulisp.com/show?38J4">Seeed Studio Wio Terminal</a>&nbsp;(320 x 240)</li>
+<li><a href="http://www.ulisp.com/show?30X8">Sipeed MAiX RISC-V boards</a>&nbsp;(320 x 240)</li>
+</ul>
+<p>You could also use the graphics extensions with an external colour TFT display attached to a board via SPI, but you would need to do some configuration of uLisp to specify the type of display.</p>
+<p>These extensions are based on and compatible with Adafruit's GFX library <sup id="cite_ref1"><a href="http://www.ulisp.com/show?31GT#cite_note1">[1]</a></sup>.</p>
+<p>For examples of using these routines see&nbsp;<a class="auto" href="http://www.ulisp.com/show?2YRM">Graphics utilities</a>.</p>
+<h3>Summary</h3>
+<h4>Plotting shapes</h4>
+<p><a href="http://www.ulisp.com/show?31GT#drawpixel">draw-pixel</a>, <a href="http://www.ulisp.com/show?31GT#drawline">draw-line</a>, <a href="http://www.ulisp.com/show?31GT#drawrect">draw-rect</a>, <a href="http://www.ulisp.com/show?31GT#fillrect">fill-rect</a>, <a href="http://www.ulisp.com/show?31GT#drawroundrect">draw-round-rect</a>, <a href="http://www.ulisp.com/show?31GT#fillroundrect">fill-round-rect</a>, <a href="http://www.ulisp.com/show?31GT#drawcircle">draw-circle</a>, <a href="http://www.ulisp.com/show?31GT#fillcircle">fill-circle</a>, <a href="http://www.ulisp.com/show?31GT#drawtriangle">draw-triangle</a>, <a href="http://www.ulisp.com/show?31GT#filltriangle">fill-triangle</a></p>
+<h4>Plotting characters</h4>
+<p><a href="http://www.ulisp.com/show?31GT#drawchar">draw-char</a>, <a href="http://www.ulisp.com/show?31GT#withgfx">with-gfx</a>, <a href="http://www.ulisp.com/show?31GT#setcursor">set-cursor</a>, <a href="http://www.ulisp.com/show?31GT#settextcolor">set-text-color</a>, <a href="http://www.ulisp.com/show?31GT#settextsize">set-text-size</a>, <a href="http://www.ulisp.com/show?31GT#settextwrap">set-text-wrap</a></p>
+<h4>Display control</h4>
+<p><a href="http://www.ulisp.com/show?31GT#fillscreen">fill-screen</a>, <a href="http://www.ulisp.com/show?31GT#setrotation">set-rotation</a>, <a href="http://www.ulisp.com/show?31GT#invertdisplay">invert-display</a>, <a href="http://www.ulisp.com/show?31GT#display">display</a></p>
+<h4>Colours</h4>
+<p>Most of the plotting functions take a colour parameter to specify the colour of plotting. This is a 16-bit number specifying the red, blue, and green components of the colour:</p>
+<p class="center"><img src="./uLisp - Graphics extensions_files/colorpack.png" alt="Colorpack.png" width="360" height="90"></p>
+<p>The following function <strong>rgb</strong> allows you to define a colour by specifying the red, green, and blue components as numbers between 0 and 255:</p>
+<pre>(defun rgb (r g b)
+  (logior (ash (logand r #xf8) 8) (ash (logand g #xfc) 3) (ash b -3)))</pre>
+<p>For example, to define an orange colour you could write:</p>
+<pre>(defvar orange (rgb 255 127 0))</pre>
+<hr>
+<h3 id="display">display&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(display)</code></p>
+<p>With monochrome OLED displays you need to call <strong>(display)</strong> to update the display from the memory cache after performing any drawing functions. Not needed with colour displays.</p>
+<h3>draw-char&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(draw-char&nbsp;<em>x</em>&nbsp;<em>y</em>&nbsp;<em>char</em>&nbsp;[<em>colour background size</em>])</code></p>
+<p>Draws the character <em>char</em> with its top left corner at (x, y). The character is drawn in a 5 x 7 pixel font in&nbsp;<em>colour</em> against <em>background</em>, which default to white and black respectively. The character can optionally be scaled by <em>size</em>.</p>
+<p class="center"><img src="./uLisp - Graphics extensions_files/char.png" alt="Char.png" width="300" height="210"></p>
+<h4 id="character-set">Built-in character set</h4>
+<p>Text plotting uses a built-in character set which is based on the IBM PC Code Page 437 character set:</p>
+<p class="center"><img src="./uLisp - Graphics extensions_files/cp437.gif" alt="CP437.gif"></p>
+<h3 id="drawcircle">draw-circle&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(draw-circle&nbsp;<em>x</em>&nbsp;<em>y</em>&nbsp;<em>r</em>&nbsp;[<em>colour</em>])</code></p>
+<p>Draws an outline circle with its centre at (x, y) and with radius r. The outline is drawn in&nbsp;<em>colour</em>, or white if omitted.</p>
+<p class="center"><img src="./uLisp - Graphics extensions_files/circle.png" alt="Circle.png" width="300" height="210"></p>
+<h3 id="drawline">draw-line&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(draw-line&nbsp;<em>x0</em>&nbsp;<em>y0 x1 y1</em>&nbsp;[<em>colour</em>])</code></p>
+<p>Draws a line from (x0 , y0) to (x1, y1) in <em>colour</em>, or white if omitted.</p>
+<h3 id="drawpixel">draw-pixel&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(draw-pixel <em>x</em> <em>y</em>&nbsp;[<em>colour</em>])</code></p>
+<p>Draws a pixel at coordinates (x , y) in <em>colour</em>, or white if omitted.</p>
+<h3 id="drawrect">draw-rect&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(draw-rect <em>x</em> <em>y</em> <em>w</em> <em>h</em> [colour])</code></p>
+<p>Draws an outline rectangle with its top left corner at (x, y), with width w, and with height h. The outline is drawn in <em>colour</em>, or white if omitted.</p>
+<p class="center"><img src="./uLisp - Graphics extensions_files/rect.png" alt="Rect.png" width="300" height="210"></p>
+<h3 id="drawroundrect">draw-round-rect&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(draw-round-rect&nbsp;<em>x</em>&nbsp;<em>y</em>&nbsp;<em>w</em>&nbsp;<em>h radius</em>&nbsp;[colour])</code></p>
+<p>Draws an outline rounded rectangle with its top left corner at (x, y), with width w, height h, and corner radius <em>radius</em>. The outline is drawn in&nbsp;<em>colour</em>, or white if omitted.</p>
+<p class="center"><img src="./uLisp - Graphics extensions_files/roundrect.png" alt="Roundrect.png" width="300" height="210"></p>
+<h3 id="drawtriangle">draw-triangle&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(draw-triangle&nbsp;<em>x0 y0 x1 y1 x2 y2</em>&nbsp;[colour])</code></p>
+<p>Draws an outline triangle between (x1, y1), (x2, y2), and (x3, y3). The outline is drawn in&nbsp;<em>colour</em>, or white if omitted.</p>
+<p class="center"><img src="./uLisp - Graphics extensions_files/triangle.png" alt="Triangle.png" width="300" height="210"></p>
+<h3 id="fillcircle">fill-circle&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(fill-circle&nbsp;<em>x</em>&nbsp;<em>y</em>&nbsp;<em>r</em>&nbsp;[colour])</code></p>
+<p>Draws a filled circle with its centre at (x, y) and with radius r. The circle is drawn in&nbsp;<em>colour</em>, or white if omitted.</p>
+<h3 id="fillrect">fill-rect&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(fill-rect&nbsp;<em>x</em>&nbsp;<em>y</em>&nbsp;<em>w</em>&nbsp;<em>h</em>&nbsp;[colour])</code></p>
+<p>Draws a filled rectangle with its top left corner at (x, y), with width w, and with height h. The rectangle is drawn in&nbsp;<em>colour</em>, or white if omitted.</p>
+<h3 id="fillroundrect">fill-round-rect&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(fill-round-rect&nbsp;<em>x</em>&nbsp;<em>y</em>&nbsp;<em>w</em>&nbsp;<em>h radius</em>&nbsp;[<em>colour</em>])</code></p>
+<p>Draws a filled rounded rectangle with its top left corner at (x, y), with width w, height h, and corner radius&nbsp;<em>radius</em>. The frame is drawn in&nbsp;<em>colour</em>, or white if omitted.</p>
+<div>
+<h3 id="fillscreen">fill-screen&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(fill-screen&nbsp;[<em>colour</em>])</code></p>
+<p>Fills or clears the screen with <em>colour</em>, default black.</p>
+</div>
+<h3 id="filltriangle">fill-triangle&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(fill-triangle&nbsp;<em>x0 y0 x1 y1 x2 y2</em>&nbsp;[<em>colour</em>])</code></p>
+<p>Draws a filled triangle between (x1, y1), (x2, y2), and (x3, y3). The triangle is drawn in&nbsp;<em>colour</em>, or white if omitted.</p>
+<h3 id="invertdisplay">invert-display&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(invert-display <em>boolean</em>)</code></p>
+<p>Mirror-images the display.<span style="text-align: center;">&nbsp;</span></p>
+<h3 id="setcursor">set-cursor&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(set-cursor&nbsp;<em>x</em>&nbsp;<em>y</em>)</code></p>
+<p>Sets the start point for text plotting to (x, y).</p>
+<div>
+<h3 id="settextcolor">set-text-color&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(set-text-color <em>colour</em> [<em>background</em>])</code></p>
+<p>Sets the text colour for text plotted using <a href="http://www.ulisp.com/show?31GT#withgfx">with-gfx</a>.</p>
+</div>
+<div>
+<h3 id="settextsize">set-text-size&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(set-text-size <em>scale</em>)</code></p>
+<p>Scales text by the specified size, default 1.</p>
+</div>
+<div>
+<h3 id="settextwrap">set-text-wrap&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(set-text-wrap <em>boolean</em>)</code></p>
+<p>Specified whether text wraps at the right-hand edge of the display; the default is t.</p>
+<div>
+<h3 id="setrotation">set-rotation&nbsp;<span style="color: #90aa55;">function</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(set-rotation&nbsp;<em>option</em>)</code></p>
+<p>Sets the display orientation for subsequent graphics commands; values are 0, 1, 2, or 3.</p>
+</div>
+</div>
+<h3 id="withgfx">with-gfx&nbsp;<span style="color: #90aa55;">special form</span></h3>
+<p><strong>Syntax:</strong>&nbsp;<code>(with-gfx (<em>stream</em>)&nbsp;<em>form*</em>)</code></p>
+<p>The <strong>with-gfx</strong> form evaluates the forms with&nbsp;<em>stream</em>&nbsp;bound to a&nbsp;<strong>gfx-stream</strong>.</p>
+<p>You can then print text to the graphics display using the standard uLisp print commands. To control printing use <strong>set-cursor</strong>, <strong>set-text-color</strong>, <strong>set-text-size</strong>, and <strong>set-text-wrap</strong>.</p>
+<p>For example, the following function pretty-prints the currently defined functions to the display:</p>
+<pre>(defun gprint ()
+  (fill-screen)
+  (set-rotation 2)
+  (with-gfx (str)
+    (set-cursor 0 0)
+    (pprintall str)))</pre><hr>
+<ol>
+<li id="cite_note1"><a href="http://www.ulisp.com/show?31GT#cite_ref1">^</a> Diagrams reproduced from Adafruit under the <a href="http://creativecommons.org/licenses/by-sa/3.0/">Attribution-ShareAlike Creative Commons</a> licence.</li>
+</ol>
+<div class="nextprevious" style="overflow:hidden;"><hr>
+<p style="float: left;">
+<span style="font-weight: bold;">Previous: </span>
+<a href="http://www.ulisp.com/show?3L">Language reference</a></p>
+<p style="float: right;">
+<span style="font-weight: bold;">Next: </span>
+<a href="http://www.ulisp.com/show?2B27">Wi-Fi extensions</a></p>
+</div>
+</div>
+</div>
+<div id="footer"><p style="text-align:center">Copyright 2026</p></div>
+</div>
+
+
+</body></html>
