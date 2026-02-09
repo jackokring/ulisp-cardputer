@@ -489,7 +489,7 @@
     <!--
       Functions in a uLisp Library
       The following identifiers are symbols in the uLisp LispLibrary.h file,
-      and in the Bignums.ino file.
+      and in the Bignums.ino file. Also the Graphics Extensions.
     -->
 
     <context id="lisplibrary" style-ref="lisp-library">
@@ -510,6 +510,28 @@
       <keyword>\$logior</keyword>
       <keyword>\$logxor</keyword>
       <keyword>\$ash</keyword>
+
+      <keyword>display</keyword>
+      <keyword>draw-char</keyword>
+      <keyword>draw-circle</keyword>
+      <keyword>draw-line</keyword>
+      <keyword>draw-pixel</keyword>
+      <keyword>draw-rect</keyword>
+      <keyword>draw-round-rect</keyword>
+      <keyword>draw-triangle</keyword>
+      <keyword>fill-circle</keyword>
+      <keyword>fill-rect</keyword>
+      <keyword>fill-round-rect</keyword>
+      <keyword>fill-screen</keyword>
+      <keyword>fill-triangle</keyword>
+      <keyword>invert-display</keyword>
+      <keyword>set-cursor</keyword>
+      <keyword>set-text-color</keyword>
+      <keyword>set-text-size</keyword>
+      <keyword>set-text-wrap</keyword>
+      <keyword>set-totation</keyword>
+      <keyword>with-gfx</keyword>
+
       <keyword>object</keyword>
       <keyword>value</keyword>
       <keyword>update</keyword>
@@ -534,6 +556,7 @@
       <keyword>gfx</keyword>
       <keyword>cli</keyword>
       <keyword>rgb</keyword>
+
     </context> 
 
     <context id="boolean" style-ref="boolean">
