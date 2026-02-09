@@ -1978,27 +1978,64 @@ bool sfx_playing = false;
 TaskHandle_t audio_handle = NULL;
 SemaphoreHandle_t audio_mutex = NULL;
 StaticSemaphore_t mutex_buf;
+#define SAMPLE_RATE 22050
+#define SAMPLE_TIME (1.0f / SAMPLE_RATE) 
 
 float clamp(float in) { return fmax(-1.0f, fmin(1.0f, in)); }
 
 // sound effect process parameters
 
+// frequency para
+int32_t a_fr(float in) {
+  return a_lin(SAMPLE_TIME * in);
+}
+
+float au_fr(int32_t in) {
+  float t = au_lin(in);
+  return t * SAMPLE_RATE;
+}
+
+// amplitude para
+int32_t a_am(float in) {
+  return a_lin(copysign(sqrt(fabs(in)), in));
+}
+
+float au_am(int32_t in) {
+  float t = au_lin(in);
+  return copysign(t * t, t);
+}
+
+//linear para
 int32_t a_lin(float in) {
-  return (int32_t)(in * ((1 << 31) - 1));
+  return (int32_t)(clamp(in) * ((1 << 31) - 1));
 }
 
 float au_lin(int32_t in) {
   return ((float)in) * (1 / ((1 << 31) - 1));
 }
 
-enum sfxpara {
+// time constant para
+int32_t a_tc(float in) {
+  return a_lin(copysign(1.0f - expf(SAMPLE_RATE * fabs(in)), in));
+}
+
+float au_tc(int32_t in) {
+  float t = au_lin(in);
+  return copysign(SAMPLE_TIME * logf(1.0f - fabs(t)), t);
+}
+
+enum sfxpara {  
   A_P,// phase
+
   A_F,// frequency
   A_A,// amplitude
+  
   A_FL, // frequency limit
   A_AL, // amplitude limit
-  A_FD, // frequency drify
+  
+  A_FD, // frequency drift
   A_AD, // amplitude drift
+  
   A_MAX
   };
 
@@ -2006,9 +2043,15 @@ int32_t apara[A_MAX] = { 0 };
 
 int32_t (*const a_map[A_MAX])(float in) = {
   a_lin,
+  a_fr, a_am,
+  a_fr, a_am,
+  a_tc, a_tc,
 };
 float (*const a_unmap[A_MAX])(int32_t in) = {
-  au_lin
+  au_lin,
+  au_fr, au_am,
+  au_fr, au_am,
+  au_tc, au_tc,
 };
 
 // fixed point and truncate
@@ -2050,7 +2093,7 @@ void audio_task(void *para) {
     }
     xSemaphoreGive(audio_mutex);
     // que and suspend if busy?
-    M5Cardputer.Speaker.playRAW(blk, blk_size, 22050, 1, 7);// channel 7 (sfx) auto play
+    M5Cardputer.Speaker.playRAW(blk, blk_size, SAMPLE_RATE, 1, 7);// channel 7 (sfx) auto play
   }
 }
 
