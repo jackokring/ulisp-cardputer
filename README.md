@@ -45,7 +45,7 @@ I'll add any extensions to the `.lang` file for highlighting as and when.
 - The uLisp documentation refers to "tail recursion" as a form. This contrary to the expectation of using less stack in a recursion loop,
 just performs an  `eval` post execution. In this sense it does save a stack frame by continuing with the "selected" for return list. More
 of a tail continuation, without an extra `eval` stack frame.
-- There is little documentation on the speaker source. Turns out `M̀5Cardputer.Speaker.isPlaying(chan) > 1` helps with queuing. There are 2 buffers in `M̀5Unified`
+- There is little documentation on the speaker source. Turns out `M5Cardputer.Speaker.isPlaying(chan) > 1` helps with queuing. There are 2 buffers in `M5Unified`
 and they are just pointers, so with 2 in the queue (no write allowed) an extra one is needed for generation, making 3. 
 
 ## Things I Might Do (Not Everything, but Alot with Simple Function Choices)
