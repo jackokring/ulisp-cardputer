@@ -8,7 +8,7 @@ A version of uLisp to convert the M5Stack Cardputer into a self-contained handhe
 * **tokyo-night.xml** - a nice MIT licenced theme for **Xed**.
 * **data** - SPIFFS files (keep it under 1 MB, not currently used).
 
-You must add the `M5GFX` and `M5Unified` libraries to the Arduino project to satify all dependancies. As usual, the
+You must add the `M5Cardputer`, `M5GFX` and `M5Unified` libraries to the Arduino project to satify all dependancies. As usual, the
 `Sketch > Export compiled Binary` option places the binary in the project directory for use with M5Launcher.
 
 ## General Status of Build Size (on 2026-01-21 commit)
@@ -55,22 +55,20 @@ and 5 pix horizontal gap extra (4 of these gaps).
 - [X] Keyboard - swap `()` and `[]` as lisp. Also `\` with `|` for arcane CS reasons and CTRL "causing" a SHIFT for `^\` (and `^[` on 9, not synthetic `ESC`).
 - [ ] Maybe add some uses for `<backtick>`, `ctrl`, `opt`and `fn`.
 - [X] Inverted Character Key - `Alt`for inverted characters.
-- [ ] SI/SO Functions - maybe some others too to easily access some console control.
 - [ ] `directory` - the card is 8 GB. Is `cd`reasonable?
 - [ ] Color Keywords - improving mental parsing, and real pretty printing.
 - [X] Bignums - from negative integer, subtract larger for possible error. Division by zero.
 - [ ] Bluetooth - maybe. Audio.
 - [ ] Key Input -  maybe a non-blocking keyboard read.
-- [ ] Sound - expand for more flexibility.
 - [X] Numbers - a few more number theoretic functions. For bignums and `(^ number*)` for floating point continued powers with a shorter name. Maybe `(nanp number)`.
 - [X] List Reduce - a `(reduce 'op items*)` (right associative reduce) for any dyad operator with a `nil` parameter return of the reduction accumulator. As `(+)` does.
 - [ ] Calculus - a few more calculus functions.
 - [ ] Solver - some kind of variable solver.
 - [ ] Streams - maybe there's more. Audio.
 - [ ] Other Types - for rational and complex. Choice of natural R or P representation.
-- [X] ULOS Simple Object System.
-- [X] Octo-Sound. Use the "pin" number as the channel number. As the Cardputer otherwise doesn't use it. Octave becomes duration. Add `(* 12 octave)` to the note. **Clicky**?
-The first seven channels are used (0 to 6), with channel 7 generating sound effects (if enabled), or just notes.   
+- [X] ULOS - Simple Object System.
+- [X] Octo-Sound - uses the "pin" number as the channel number. As the Cardputer otherwise doesn't use it. Octave becomes duration. Add `(* 12 octave)` to the note. **Clicky**?
+- [ ] Sound FX - the first seven channels are used (0 to 6), with channel 7 generating sound effects (if enabled), or just notes.   
 
 ## Other M5Carputer Projects
 
