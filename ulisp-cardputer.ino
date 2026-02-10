@@ -2176,7 +2176,10 @@ int WiFiread () {
 }
 
 void serialbegin (int address, int baud) {
-  if (address == 1) Serial1.begin((long)baud*100);
+  if (address == 0) Serial1.begin((long)baud*100, SERIAL_8N1, 2, 1);// grove
+  else if (address == 1 && M5.getBoard() == m5::board_t::board_M5CardputerADV) {
+    Serial1.begin((long)baud*100, SERIAL_8N1, 13, 15);//default ADV -hat
+  }
   else error("port not supported", number(address));
 }
 
@@ -2899,17 +2902,19 @@ object *sp_withi2c (object *args, object *env) {
     if (integerp(rw)) I2Ccount = rw->integer;
     read = (rw != NULL);
   }
-  // Top bit of address is I2C port
+  // Top bit of address is I2C port ADV?
   TwoWire *port = &Wire;
   #if ULISP_HOWMANYI2C == 2
-  if (address > 127) port = &Wire1;
+  if (address > 127 && M5.getBoard() == m5::board_t::board_M5CardputerADV) port = &Wire1;
+  // I2Cinit(port, 8, 9, 1); // internal Pullups - ADV keyboard no reinit
+  #else
+  I2Cinit(port, 2, 1, 1); // grove Pullups -reinit?
   #endif
-  I2Cinit(port, 1); // Pullups
   object *pair = cons(var, (I2Cstart(port, address & 0x7F, read)) ? stream(I2CSTREAM, address) : nil);
   push(pair,env);
   object *forms = cdr(args);
   object *result = eval(tf_progn(forms,env), env);
-  I2Cstop(port, read);
+  if(port != &Wire1) I2Cstop(port, read);// no close internal i2c
   return result;
 }
 
