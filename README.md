@@ -72,16 +72,17 @@ and they are just pointers, so with 2 in the queue (no write allowed) an extra o
 - [ ] Other Types - for rational and complex. Choice of natural R or P representation.
 - [X] ULOS - Simple Object System.
 - [X] Octo-Sound - uses the "pin" number as the channel number. As the Cardputer otherwise doesn't use it. Octave becomes duration. Add `(* 12 octave)` to the note. **Clicky**?
-- [ ] Sound FX - the first seven channels are used (0 to 6), with channel 7 generating sound effects (if enabled), or just notes.   
+- [ ] Sound FX - the first seven channels are used (0 to 6), with channel 7 generating sound effects (if enabled), or just notes.
+- [X] CardputerADV - I2C and Serial1 safety code. 
 
 ## Other M5Carputer Projects
 
 This list will expand as I place nice things I like.
 
-* MiniAcid - ooh yes, tweeking for the ear.
-* M5Launcher - a nice fine app as occasionally used!
-* M5-Keyboard-Mouse - press that GO for keys or mouse. USB and Bluetooth.
-* IR-Remote - apparently it does the lot.
-* Wifi-Scan - clean show me the SSIDs.
-* Porkchop - very entertaining.
-* MicroHydra - yes, I'm using a Cardputer 1 for keys, but MicroPython.
+* [MiniAcid](https://github.com/urtubia/miniacid) - ooh yes, tweeking for the ear.
+* [M5Launcher](https://bmorcelli.github.io/Launcher/) - a nice fine app as occasionally used!
+* [M5-Keyboard-Mouse](https://github.com/geo-tp/Bluetooth-Keyboard-Mouse-Emulator) - press that GO for keys or mouse. USB and Bluetooth.
+* [Ultimate-Remote](https://github.com/geo-tp/Ultimate-Remote) - apparently it does the lot.
+* []Wifi-Scan](https://github.com/geo-tp/Open-Wifi-Scanner) - clean show me the SSIDs.
+* [Porkchop](https://github.com/0ct0sec/M5PORKCHOP) - very entertaining.
+* [MicroHydra](https://github.com/echo-lalia/MicroHydra) - yes, I'm using a Cardputer 1 for keys, but MicroPython.
