@@ -2065,7 +2065,8 @@ int16_t inline chop(int32_t a) {
 }
 
 void audio_task(void *para) {
-#define blk_size 1024
+  // 33 ms?
+#define blk_size 256
   static int16_t buf[blk_size * 3];
    
   for(int b = 0; ; b = (b + 1) % 3) {// minor % time for whole buffer calc
