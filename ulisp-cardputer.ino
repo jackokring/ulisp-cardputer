@@ -2093,6 +2093,9 @@ void audio_task(void *para) {
     }
     xSemaphoreGive(audio_mutex);
     // que and suspend if busy?
+    while(M5Cardputer.Speaker.isPlaying(7) > 1) {
+      vTaskDelay(1 / portTICK_PERIOD_MS);
+    }
     M5Cardputer.Speaker.playRAW(blk, blk_size, SAMPLE_RATE, 1, 7);// channel 7 (sfx) auto play
   }
 }
@@ -2116,7 +2119,7 @@ int audio_get(int para) {// priority given to generate task as sloppy tweeking O
 void audio_on(bool on) {
   while(xSemaphoreTake(audio_mutex, 10 / portTICK_PERIOD_MS) != pdTRUE);
   sfx_playing = on;
-  if(M5Cardputer.Speaker.isPlaying()) M5Cardputer.Speaker.stop(7);
+  if(M5Cardputer.Speaker.isPlaying(7)) M5Cardputer.Speaker.stop(7);
   xSemaphoreGive(audio_mutex);
 }
 #endif
