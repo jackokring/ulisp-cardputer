@@ -5,7 +5,7 @@ A version of uLisp to convert the M5Stack Cardputer into a self-contained handhe
 * **Bignums.ino** - big numbers as a types. The **$** prefix is used on all functions. (Merged).
 * **uLisp.lang** - a syntax file for **uLisp** to make it easier to use an editor like **Xed** from **Linux Mint**.
 * **tokyo-night.xml** - a nice MIT licenced theme for **Xed**.
-* **data** - SPIFFS files. Keep it under 1 MB, a M̀%Launcher` limit (not currently used).
+* **data** - SPIFFS files. Keep it under 1 MB, a `M5Launcher` limit (not currently used).
 
 You must add the `M5Cardputer`, `M5GFX` and `M5Unified` libraries to the Arduino project to satify all dependancies. As usual, the
 `Sketch > Export compiled Binary` option places the binary in the project directory for use with M5Launcher.
