@@ -2065,11 +2065,10 @@ int16_t inline chop(int32_t a) {
 }
 
 void audio_task(void *para) {
-  static const int buf_size = 4096;
-  static int16_t buf[buf_size];
-  static int blk_size = buf_size / 4;
+#define blk_size 1024
+  static int16_t buf[blk_size * 3];
    
-  for(int b = 0; ; b = (b + 1) & 3) {
+  for(int b = 0; ; b = (b + 1) % 3) {// minor % time for whole buffer calc
     auto blk = buf + blk_size * b;
     if(!sfx_playing) {
       vTaskDelay(10 / portTICK_PERIOD_MS);
