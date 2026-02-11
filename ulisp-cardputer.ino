@@ -17,6 +17,7 @@
 #define gfxsupport
 #define lisplibrary
 #define extensions
+#define gpssupport
 #define sfxsupport
 // #define largerfont
 
@@ -31,6 +32,9 @@
 #include <WiFi.h>
 #include "M5Cardputer.h"
 #include "M5GFX.h"
+#if defined(gpssupport)
+#include <TinyGPSPlus.h> 
+#endif
 
 #define SD_SPI_SCK_PIN  40
 #define SD_SPI_MISO_PIN 39
@@ -2175,26 +2179,72 @@ int WiFiread () {
   return client.read();
 }
 
+#if defined(gpssupport)
+TinyGPSPlus gps_data;
+bool gps_frame = false;
+#endif
+
 // grove G2 manager for firmware reset
 // it's a meta-programming thing
 // serial default as G2 is RX cold input
+// also ADV GPIO xtra
 bool serial_i2c_serial = true;
 bool serial_i2c_locked = false;
 bool serial_2_on = false;
+bool gps_on = false;
+bool adv_io_on = false;
+HardwareSerial *gps_serial = &Serial1;
 
 // for once in an uptime code use depending on grove mode
 // only the crazy would G1, G2 as "normal pins"
 // i2c or serial give better state IO
 void serial_to_i2c() {
-  if(serial_i2c_locked && serial_i2c_serial) error2("firmware IO serial lock");
+  if(gps_on && gps_serial == &Serial1) {
+    serial_i2c_serial = true;//fail by alter
+    serial_i2c_locked = true;
+    return;
+  }
+  if(serial_i2c_locked && serial_i2c_serial) error2("firmware IO serial or gps lock");
   else serial_i2c_serial = false;
   serial_i2c_locked = true;
 }
 
 // this too!
 void serial_not_i2c() {
-  if(serial_i2c_locked && !serial_i2c_serial) error2("firmware IO i2c lock");
+  if(gps_on && gps_serial == &Serial1) {
+    serial_i2c_serial = false;//fail by alter
+    serial_i2c_locked = true;
+    return;
+  }
+  if(serial_i2c_locked && !serial_i2c_serial) error2("firmware IO i2c or gps lock");
   serial_i2c_locked = true;
+}
+
+void gpsbegin(bool adv) {
+  if(gps_on) {
+    if((gps_serial == &Serial1) ^ adv) {
+      error2("firmware IO GPS lock");
+    }
+    return;// already done or fail
+  }
+  if(adv) {
+    if(adv_io_on) {
+      error2("firmware IO pin lock");
+      return;
+    }
+    gps_serial == &Serial2;
+    Serial2.begin(9600, SERIAL_8N1, 13, 15);//advance independant on 2
+    // TX not used?
+    serial_2_on = true;//block pins
+  } else {
+    if(serial_i2c_locked) {
+      error2("firmware IO serial or i2c lock");
+      return;
+    }
+    gps_serial == &Serial1;
+    Serial1.begin(9600, SERIAL_8N1, 2, 1);
+  }
+  gps_on = true;
 }
 
 bool serialbegin (int address, int baud) {
@@ -2206,7 +2256,10 @@ bool serialbegin (int address, int baud) {
   }
   else if (address == 1 && M5.getBoard() == m5::board_t::board_M5CardputerADV) {
     // valid to test ADV for risky outs on keyboard with v1(.1) and skill?
-    serial_2_on = true;//TODO: also tintGPS ... needs to set this
+    if(gps_on && gps_serial == &Serial2) {
+      return true;//pins used so fail
+    }
+    serial_2_on = true;
     // N. B. It's serial UART 1 and so is single serial transationed
     // I just won't make another stream for such a situation
     // perhaps it also options GPS seperation of concerns??
@@ -2985,7 +3038,10 @@ bool pinOK(int pin) {
   if(pin >= 3 && pin <= 6 && M5.getBoard() == m5::board_t::board_M5CardputerADV) return true;
   // serial port 2 lock out
   // play safe with v1(.1)?
-  if(!serial_2_on && M5.getBoard() == m5::board_t::board_M5CardputerADV && (pin == 13 || pin == 15)) return true;
+  if(!serial_2_on && M5.getBoard() == m5::board_t::board_M5CardputerADV && (pin == 13 || pin == 15)) {
+    adv_io_on = true;
+    return true;
+  }
   error("firmware IO lock on pin", number(pin));
   return false;
 }
@@ -6403,6 +6459,11 @@ void backtrace (symbol_t name) {
 
 object *eval (object *form, object *env) {
   bool stackpos;
+#if defined(gpssupport)
+  if(gps_on && gps_serial->available()) {
+    gps_frame = gps_data.encode(gps_serial->read());
+  }
+#endif
   int TC=0;
   EVAL:
   // Enough space?
