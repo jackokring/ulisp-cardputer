@@ -2175,12 +2175,41 @@ int WiFiread () {
   return client.read();
 }
 
-void serialbegin (int address, int baud) {
-  if (address == 0) Serial1.begin((long)baud*100, SERIAL_8N1, 2, 1);// grove
+// grove G2 manager for firmware reset
+// it's a meta-programming thing
+// serial default as G2 is RX cold input
+bool serial_i2c_serial = true;
+bool serial_i2c_locked = false;
+bool serial_2_on = false;
+
+// for once in an uptime code use depending on grove mode
+// only the crazy would G1, G2 as "normal pins"
+// i2c or serial give better state IO
+void serial_to_i2c() {
+  if(serial_i2c_locked && serial_i2c_serial) error2("firmware IO serial lock");
+  else serial_i2c_serial = false;
+  serial_i2c_locked = true;
+}
+
+// this too!
+void serial_not_i2c() {
+  if(serial_i2c_locked && !serial_i2c_serial) error2("firmware IO i2c lock");
+  serial_i2c_locked = true;
+}
+
+bool serialbegin (int address, int baud) {
+  bool err = false;
+  if(!serial_i2c_serial) { error2("i2c in use"); err = true; }
+  else if (address == 0) Serial1.begin((long)baud*100, SERIAL_8N1, 2, 1);// grove
   else if (address == 1 && M5.getBoard() == m5::board_t::board_M5CardputerADV) {
+    serial_2_on = true;
+    // N. B. It's serial UART 1 and so is single serial transationed
+    // I just won't make another stream for such a situation
+    // perhaps it also options GPS seperation of concerns??
     Serial1.begin((long)baud*100, SERIAL_8N1, 13, 15);//default ADV -hat
   }
-  else error("port not supported", number(address));
+  else { error("port not supported", number(address)); err = true; }
+  return err;
 }
 
 void serialend (int address) {
@@ -2879,7 +2908,7 @@ object *sp_withserial (object *args, object *env) {
   if (params != NULL) baud = checkinteger(eval(first(params), env));
   object *pair = cons(var, stream(SERIALSTREAM, address));
   push(pair,env);
-  serialbegin(address, baud);
+  if(!serialbegin(address, baud)) return nil;
   object *forms = cdr(args);
   object *result = eval(tf_progn(forms,env), env);
   serialend(address);
@@ -2905,17 +2934,54 @@ object *sp_withi2c (object *args, object *env) {
   // Top bit of address is I2C port ADV?
   TwoWire *port = &Wire;
   #if ULISP_HOWMANYI2C == 2
-  if (address > 127 && M5.getBoard() == m5::board_t::board_M5CardputerADV) port = &Wire1;
-  // I2Cinit(port, 8, 9, 1); // internal Pullups - ADV keyboard no reinit
+  if (address > 127 && M5.getBoard() == m5::board_t::board_M5CardputerADV) {
+    port = &Wire1;
+    // I2Cinit(port, 8, 9, 1); // internal Pullups - ADV keyboard no reinit
+  } else
   #else
-  I2Cinit(port, 2, 1, 1); // grove Pullups -reinit?
+  {
+    if(serial_i2c_serial) { error2("serial in use"); return nil; }
+    I2Cinit(port, 2, 1, 1); // grove Pullups -reinit?
+  }
   #endif
   object *pair = cons(var, (I2Cstart(port, address & 0x7F, read)) ? stream(I2CSTREAM, address) : nil);
   push(pair,env);
   object *forms = cdr(args);
   object *result = eval(tf_progn(forms,env), env);
-  if(port != &Wire1) I2Cstop(port, read);// no close internal i2c
+  I2Cstop(port, read);// does not close internal i2c
   return result;
+}
+
+/*
+const bool allow_pin[48] PROGMEM = {
+   false, false, false, true , true , true , // G0 - G5  (G3, G4, G5 risky?)
+   true , false, false, false, false, false, // G6 - G11 (G6 risky? G8, G9 internal I2C, G11 keys)
+
+   false, false, false, false, false, false, // G12 - G17 (G13, G15 second serial RX/TX risky too?, G14 SPI MOSI)
+   false, false, false, false, false, false, // G18 - G23
+
+   false, false, false, false, false, false, // G24 - G29
+   false, false, false, false, false, false, // G30 - G35
+
+   false, false, false, false, false, false, // G36 - G41 (G39 SPI MISO, G40 SPI CLK)
+   false, false, false, false, false, false, // G42 - G47
+   false // G48
+};
+*/
+
+// pin access control and error
+bool pinOK(int pin) {
+  if(pin < 0 || pin > 48) {
+    error2("not an esp32s3 stamp pin");
+    return false;
+  }
+  // still might have mode lock by output on non CardputerADV 
+  //if(allow_pin[pin]) return true;
+  if(pin >= 3 && pin <= 6) return true;
+  // serial port 2 lock out
+  if(!serial_2_on) if(pin == 13 || pin == 15) return true;
+  error("firmware IO lock on pin", number(pin));
+  return false;
 }
 
 // is SPI used for SD card with settings as is?
@@ -2925,6 +2991,7 @@ object *sp_withspi (object *args, object *env) {
   params = cdr(params);
   if (params == NULL) error2(nostream);
   int pin = checkinteger(eval(car(params), env));
+  if(!pinOK(pin)) return nil;
   pinMode(pin, OUTPUT);
   digitalWrite(pin, HIGH);
   params = cdr(params);
@@ -4246,10 +4313,11 @@ object *fn_restarti2c (object *args, object *env) {
   int address = stream & 0xFF;
   if (stream>>8 != I2CSTREAM) error2("not an i2c stream");
   TwoWire *port;
-  if (address < 128) port = &Wire;
+  port = &Wire;
   #if ULISP_HOWMANYI2C == 2
-  else port = &Wire1;
+  else if(M5.getBoard() == m5::board_t::board_M5CardputerADV && address > 127) port = &Wire1;
   #endif
+  if(serial_i2c_serial) return nil;
   return I2Crestart(port, address & 0x7F, read) ? tee : nil;
 }
 
@@ -4314,6 +4382,7 @@ object *fn_pinmode (object *args, object *env) {
     else if (mode == 4) pm = INPUT_PULLDOWN;
     #endif
   } else if (arg != nil) pm = OUTPUT;
+  if(!pinOK(pin)) return nil;
   pinMode(pin, pm);
   return nil;
 }
@@ -4324,6 +4393,7 @@ object *fn_digitalread (object *args, object *env) {
   object *arg = first(args);
   if (keywordp(arg)) pin = checkkeyword(arg);
   else pin = checkinteger(arg);
+  if(!pinOK(pin)) return nil;
   if (digitalRead(pin) != 0) return tee; else return nil;
 }
 
@@ -4338,6 +4408,7 @@ object *fn_digitalwrite (object *args, object *env) {
   if (keywordp(arg)) mode = checkkeyword(arg);
   else if (integerp(arg)) mode = arg->integer ? HIGH : LOW;
   else mode = (arg != nil) ? HIGH : LOW;
+  if(!pinOK(pin)) return nil;
   digitalWrite(pin, mode);
   return arg;
 }
@@ -4349,6 +4420,7 @@ object *fn_analogread (object *args, object *env) {
   if (keywordp(arg)) pin = checkkeyword(arg);
   else {
     pin = checkinteger(arg);
+    if(!pinOK(pin)) return nil;
     checkanalogread(pin);
   }
   return number(analogRead(pin));
@@ -4371,7 +4443,8 @@ object *fn_analogwrite (object *args, object *env) {
   object *arg = first(args);
   if (keywordp(arg)) pin = checkkeyword(arg);
   else pin = checkinteger(arg);
-  checkanalogwrite(pin);
+  if(!pinOK(pin)) return nil;
+  checkanalogwrite(pin);//esp32 not supported
   object *value = second(args);
   analogWrite(pin, checkinteger(value));
   return value;
