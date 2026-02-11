@@ -2984,7 +2984,8 @@ bool pinOK(int pin) {
   //if(allow_pin[pin]) return true;
   if(pin >= 3 && pin <= 6) return true;
   // serial port 2 lock out
-  if(!serial_2_on) if(pin == 13 || pin == 15) return true;
+  // play safe with v1(.1)?
+  if(!serial_2_on && M5.getBoard() == m5::board_t::board_M5CardputerADV && (pin == 13 || pin == 15)) return true;
   error("firmware IO lock on pin", number(pin));
   return false;
 }
