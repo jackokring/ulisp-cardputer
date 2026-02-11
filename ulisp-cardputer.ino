@@ -4322,7 +4322,7 @@ object *fn_restarti2c (object *args, object *env) {
   #if ULISP_HOWMANYI2C == 2
   else if(M5.getBoard() == m5::board_t::board_M5CardputerADV && address > 127) port = &Wire1;
   #endif
-  if(serial_i2c_serial) return nil;
+  if(port == &Wire && serial_i2c_serial) return nil;
   return I2Crestart(port, address & 0x7F, read) ? tee : nil;
 }
 
