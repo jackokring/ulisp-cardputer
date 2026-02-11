@@ -2259,6 +2259,7 @@ bool serialbegin (int address, int baud) {
     if(gps_on && gps_serial == &Serial2) {
       return true;//pins used so fail
     }
+    if(adv_io_on) return true;//already decided for firmware app
     serial_2_on = true;
     // N. B. It's serial UART 1 and so is single serial transationed
     // I just won't make another stream for such a situation
