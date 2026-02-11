@@ -2199,17 +2199,21 @@ void serial_not_i2c() {
 
 bool serialbegin (int address, int baud) {
   bool err = false;
-  if(!serial_i2c_serial) { error2("i2c in use"); err = true; }
-  else if (address == 0) Serial1.begin((long)baud*100, SERIAL_8N1, 2, 1);// grove
+  if (address == 0) {
+    serial_not_i2c();
+    if(!serial_i2c_serial) return true;//error
+    Serial1.begin((long)baud*100, SERIAL_8N1, 2, 1);// grove
+  }
   else if (address == 1 && M5.getBoard() == m5::board_t::board_M5CardputerADV) {
-    serial_2_on = true;
+    // valid to test ADV for risky outs on keyboard with v1(.1) and skill?
+    serial_2_on = true;//TODO: also tintGPS ... needs to set this
     // N. B. It's serial UART 1 and so is single serial transationed
     // I just won't make another stream for such a situation
     // perhaps it also options GPS seperation of concerns??
     Serial1.begin((long)baud*100, SERIAL_8N1, 13, 15);//default ADV -hat
   }
-  else { error("port not supported", number(address)); err = true; }
-  return err;
+  else { error("port not supported", number(address)); return true; }
+  return false;// no error
 }
 
 void serialend (int address) {
@@ -2940,7 +2944,8 @@ object *sp_withi2c (object *args, object *env) {
   } else
   #else
   {
-    if(serial_i2c_serial) { error2("serial in use"); return nil; }
+    serial_to_i2c();// grove the i2c
+    if(serial_i2c_serial) return nil;
     I2Cinit(port, 2, 1, 1); // grove Pullups -reinit?
   }
   #endif
