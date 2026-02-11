@@ -2982,7 +2982,7 @@ bool pinOK(int pin) {
   }
   // still might have mode lock by output on non CardputerADV 
   //if(allow_pin[pin]) return true;
-  if(pin >= 3 && pin <= 6) return true;
+  if(pin >= 3 && pin <= 6 && M5.getBoard() == m5::board_t::board_M5CardputerADV) return true;
   // serial port 2 lock out
   // play safe with v1(.1)?
   if(!serial_2_on && M5.getBoard() == m5::board_t::board_M5CardputerADV && (pin == 13 || pin == 15)) return true;
