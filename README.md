@@ -79,7 +79,7 @@ was chosen.
 - [X] ULOS - Simple Object System.
 - [X] Octo-Sound - uses the "pin" number as the channel number. As the Cardputer otherwise doesn't use it. Octave becomes duration. Add `(* 12 octave)` to the note. **Clicky**?
 - [ ] Sound FX - the first seven channels are used (0 to 6), with channel 7 generating sound effects (if enabled), or just notes.
-- [X] CardputerADV - I2C and `Serial1` safety code.
+- [X] CardputerADV - I2C and `Serial1` safety code. Also `Serial2` via ADV top GPIO header.
 - [ ] GPS - serial option too. Pun.
 - [X] Y Combinator - got to have it for lambda recusion programming pattern completeness.
 - [X] Highlighting and Theme Files - for nicer editing of the `LispLibrary.h`.

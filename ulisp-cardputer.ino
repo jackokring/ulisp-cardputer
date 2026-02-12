@@ -1964,12 +1964,14 @@ enum stream { SERIALSTREAM, I2CSTREAM, SPISTREAM, SDSTREAM, WIFISTREAM, STRINGST
 WiFiClient client;
 WiFiServer server(80);
 
+HardwareSerial *gps_serial = &Serial1;
+HardwareSerial *serial_serial = &Serial1;
 void spiwrite (char c) { SPI.transfer(c); }
 void i2cwrite (char c) { I2Cwrite(&Wire, c); }
 #if ULISP_HOWMANYI2C == 2
 void i2c1write (char c) { I2Cwrite(&Wire1, c); }
 #endif
-void serial1write (char c) { Serial1.write(c); }
+void serial1write (char c) { serial_serial->write(c); }
 void WiFiwrite (char c) { client.write(c); }
 #if defined(sdcardsupport)
 File SDpfile, SDgfile;
@@ -2169,7 +2171,8 @@ int i2cread () { return I2Cread(&Wire); }
 #if ULISP_HOWMANYI2C == 2
 int i2c1read () { return I2Cread(&Wire1); }
 #endif
-int serial1read () { while (!Serial1.available()) testescape(); return Serial1.read(); }
+
+int serial1read () { while (!serial_serial->available()) testescape(); return serial_serial->read(); }
 #if defined(sdcardsupport)
 int SDread () { return SDgfile.read(); }
 #endif
@@ -2193,7 +2196,6 @@ bool serial_i2c_locked = false;
 bool serial_2_on = false;
 bool gps_on = false;
 bool adv_io_on = false;
-HardwareSerial *gps_serial = &Serial1;
 
 // for once in an uptime code use depending on grove mode
 // only the crazy would G1, G2 as "normal pins"
@@ -2266,19 +2268,20 @@ bool serialbegin (int address, int baud) {// true on error
       return true;//pins used so fail
     }
     if(adv_io_on) return true;//already decided for firmware app pinMode
-    serial_2_on = true;
+    serial_2_on = true;//no pins on top header adv
+    serial_serial = &Serial2;
     // N. B. It's serial UART 1 and so is single serial transationed
     // I just won't make another stream for such a situation
     // perhaps it also options GPS seperation of concerns??
-    Serial1.begin((long)baud*100, SERIAL_8N1, 13, 15);//default ADV -hat
+    Serial2.begin((long)baud*100, SERIAL_8N1, 13, 15);//default ADV -hat
   }
   else { error("port not supported", number(address)); return true; }
   return false;// no error
 }
 
-void serialend (int address) {
-  if (address == 1) {Serial1.flush(); Serial1.end(); }
-  else error("port not supported", number(address));
+void serialend () {
+  serial_serial->flush();
+  serial_serial->end();
 }
 
 // Stream writing functions
@@ -2975,7 +2978,7 @@ object *sp_withserial (object *args, object *env) {
   if(serialbegin(address, baud)) return nil;
   object *forms = cdr(args);
   object *result = eval(tf_progn(forms,env), env);
-  serialend(address);
+  serialend();
   return result;
 }
 
