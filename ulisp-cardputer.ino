@@ -2198,26 +2198,34 @@ HardwareSerial *gps_serial = &Serial1;
 // for once in an uptime code use depending on grove mode
 // only the crazy would G1, G2 as "normal pins"
 // i2c or serial give better state IO
-void serial_to_i2c() {
+bool serial_to_i2c() {//true on error
   if(gps_on && gps_serial == &Serial1) {
     serial_i2c_serial = true;//fail by alter
     serial_i2c_locked = true;
-    return;
+    return true;
   }
-  if(serial_i2c_locked && serial_i2c_serial) error2("firmware IO serial or gps lock");
+  if(serial_i2c_locked && serial_i2c_serial) {
+    error2("firmware IO serial or gps lock");
+    return true;
+  }
   else serial_i2c_serial = false;
   serial_i2c_locked = true;
+  return false;
 }
 
 // this too!
-void serial_not_i2c() {
+bool serial_not_i2c() {// true on error
   if(gps_on && gps_serial == &Serial1) {
     serial_i2c_serial = false;//fail by alter
     serial_i2c_locked = true;
-    return;
+    return true;
   }
-  if(serial_i2c_locked && !serial_i2c_serial) error2("firmware IO i2c or gps lock");
+  if(serial_i2c_locked && !serial_i2c_serial) {
+    error2("firmware IO i2c or gps lock");
+    return true;
+  }
   serial_i2c_locked = true;
+  return false;
 }
 
 void gpsbegin(bool adv) {
@@ -2247,11 +2255,9 @@ void gpsbegin(bool adv) {
   gps_on = true;
 }
 
-bool serialbegin (int address, int baud) {
-  bool err = false;
+bool serialbegin (int address, int baud) {// true on error
   if (address == 0) {
-    serial_not_i2c();
-    if(!serial_i2c_serial) return true;//error
+    if(serial_not_i2c()) return true;//error
     Serial1.begin((long)baud*100, SERIAL_8N1, 2, 1);// grove
   }
   else if (address == 1 && M5.getBoard() == m5::board_t::board_M5CardputerADV) {
@@ -2259,7 +2265,7 @@ bool serialbegin (int address, int baud) {
     if(gps_on && gps_serial == &Serial2) {
       return true;//pins used so fail
     }
-    if(adv_io_on) return true;//already decided for firmware app
+    if(adv_io_on) return true;//already decided for firmware app pinMode
     serial_2_on = true;
     // N. B. It's serial UART 1 and so is single serial transationed
     // I just won't make another stream for such a situation
@@ -2966,7 +2972,7 @@ object *sp_withserial (object *args, object *env) {
   if (params != NULL) baud = checkinteger(eval(first(params), env));
   object *pair = cons(var, stream(SERIALSTREAM, address));
   push(pair,env);
-  if(!serialbegin(address, baud)) return nil;
+  if(serialbegin(address, baud)) return nil;
   object *forms = cdr(args);
   object *result = eval(tf_progn(forms,env), env);
   serialend(address);
@@ -2998,8 +3004,7 @@ object *sp_withi2c (object *args, object *env) {
   } else
   #else
   {
-    serial_to_i2c();// grove the i2c
-    if(serial_i2c_serial) return nil;
+    if(serial_to_i2c()) return nil;// grove the i2c
     I2Cinit(port, 2, 1, 1); // grove Pullups -reinit?
   }
   #endif
@@ -4380,7 +4385,7 @@ object *fn_restarti2c (object *args, object *env) {
   #if ULISP_HOWMANYI2C == 2
   else if(M5.getBoard() == m5::board_t::board_M5CardputerADV && address > 127) port = &Wire1;
   #endif
-  if(port == &Wire && serial_i2c_serial) return nil;
+  if(port == &Wire && serial_i2c_serial) return nil;// grove ok? how it got stream?
   return I2Crestart(port, address & 0x7F, read) ? tee : nil;
 }
 

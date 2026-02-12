@@ -46,7 +46,12 @@ I'll add any extensions to the `.lang` file for highlighting as and when.
 just performs an  `eval` post execution. In this sense it does save a stack frame by continuing with the "selected" for return list. More
 of a tail continuation, without an extra `eval` stack frame.
 - There is little documentation on the speaker source. Turns out `M5Cardputer.Speaker.isPlaying(chan) > 1` helps with queuing. There are 2 buffers in `M5Unified`
-and they are just pointers, so with 2 in the queue (no write allowed) an extra one is needed for generation, making 3. 
+and they are just pointers, so with 2 in the queue (no write allowed) an extra one is needed for generation, making 3.
+- The competition for IO pins is intensive. Seems the I2C has better expansion options than serial. It's better to limit options
+by fixing the protocol usage on first use and later throwing errors, and not electrical shorts. Serial RX versus an I2C DA into the external TX voltage!
+When doing meta-programming, (or `random` from `globals`) a GPIO allocation early in the code for the power or reset duration (hot swap crazy)
+was chosen.
+- It looks like the memory map is used to validate function pointer types like builtins. The numbers seemed a bit random. 
 
 ## Things I Might Do (Not Everything, but Alot with Simple Function Choices)
 
@@ -58,7 +63,7 @@ and they are just pointers, so with 2 in the queue (no write allowed) an extra o
 - [X] Scroll Lock - `ctrl` + `enter`(like last line given by `shift`+ `enter`). Use any key to continue scrolling another page if scroll is locked.
 - [X] Keyboard - swap `()` and `[]` as lisp. Also `\` with `|` for arcane CS reasons and CTRL "causing" a SHIFT for `^\` (and `^[` on 9, not synthetic `ESC`).
 - [ ] Maybe add some uses for `<backtick>`, `ctrl`, `opt`and `fn`.
-- [X] Inverted Character Key - `Alt`for inverted characters.
+- [X] Inverted Character Key - `Alt`for inverted characters. Only characters 128 to 159 are specially selected normal versions from the font. 160 to 255 are inverted.
 - [ ] `directory` - the card is 8 GB. Is `cd`reasonable?
 - [ ] Color Keywords - improving mental parsing, and real pretty printing.
 - [X] Bignums - from negative integer, subtract larger for possible error. Division by zero.
@@ -73,7 +78,9 @@ and they are just pointers, so with 2 in the queue (no write allowed) an extra o
 - [X] ULOS - Simple Object System.
 - [X] Octo-Sound - uses the "pin" number as the channel number. As the Cardputer otherwise doesn't use it. Octave becomes duration. Add `(* 12 octave)` to the note. **Clicky**?
 - [ ] Sound FX - the first seven channels are used (0 to 6), with channel 7 generating sound effects (if enabled), or just notes.
-- [X] CardputerADV - I2C and Serial1 safety code. 
+- [X] CardputerADV - I2C and Serial1 safety code.
+- [ ] GPS - serial option too. Pun.
+- [X] Y Combinator - got to have it for lambda recusion programming pattern completeness.
 
 ## Other M5Carputer Projects
 
