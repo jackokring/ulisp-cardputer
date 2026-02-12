@@ -2451,12 +2451,7 @@ void checkanalogwrite (int pin) {
 
 // Note
 
-void tone (int pin, int freq, uint16_t duration) {
-  M5Cardputer.Speaker.stop(pin % (sfx_playing? 6 : 7));
-  M5Cardputer.Speaker.tone(freq, duration, pin % (sfx_playing? 6 : 7));
-}
-
-void noTone (int pin) {
+void nonote (int pin) {
   M5Cardputer.Speaker.stop(pin % (sfx_playing? 6 : 7));
 }
 
@@ -2464,13 +2459,18 @@ const int scale[] = {4186,4435,4699,4978,5274,5588,5920,6272,6645,7040,7459,7902
 
 //least harmful repurpose of octave as duration
 void playnote (int pin, int note, int duration) {
+  if(duration <= 0) {
+    nonote(pin);
+    return;
+  }
   int prescaler = 8 - note/12;
-  if (prescaler<0 || prescaler>8) error("note out of range", number(prescaler));
-  tone(pin, scale[note%12]>>prescaler, duration);
-}
-
-void nonote (int pin) {
-  noTone(pin);
+  if (prescaler<0 || prescaler>8) {
+    error("note out of range", number(prescaler));
+    nonote(pin);
+    return;
+  }
+  M5Cardputer.Speaker.stop(pin % (sfx_playing? 6 : 7));
+  M5Cardputer.Speaker.tone(scale[note%12]>>prescaler, duration, pin % (sfx_playing? 6 : 7));
 }
 
 // Sleep
@@ -2478,7 +2478,7 @@ void nonote (int pin) {
 void initsleep () { }
 
 void doze (int secs) {
-  delay(1000 * secs);
+  vTaskDelay(1000 * secs / portTICK_PERIOD_MS);
 }
 
 // Prettyprint
