@@ -434,6 +434,10 @@
       <keyword>return</keyword>
       <keyword>room</keyword>
       <keyword>round</keyword>
+      <keyword>sat-lat</keyword>
+      <keyword>sat-long</keyword>
+      <keyword>sat-on</keyword>
+      <keyword>sat-time</keyword>
       <keyword>save-image</keyword>
       <keyword>search</keyword>
       <keyword>second</keyword>
