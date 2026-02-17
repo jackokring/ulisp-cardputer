@@ -5316,7 +5316,18 @@ object *fn_notesync (object *args, object *env) {
 }
 
 object *fn_saton (object *args, object *env) {
-
+  (void) env;
+  int add = checkinteger(first(args));
+  if(add == 0) {
+    gpsbegin(false);
+    return tee;
+  } else if(add == 1) {
+    gpsbegin(true);
+    return tee;
+  } else {
+    error("port not supported", number(add));
+    return nil;
+  }
 }
 
 // Built-in symbol names
@@ -6159,14 +6170,18 @@ const char doc246[] = "(save-bmp filename)\n"
 "Saves the screen as a BMP file.";
 
 // Extension docs
-const char duser00[] = "sat-time";
-const char duser01[] = "sat-long";
-const char duser02[] = "sat-lat";
+const char duser00[] = "(sat-time)\n"
+"Returns (y m d h m s f) in UTC.\n";
+const char duser01[] = "(sat-long)\n"
+"\n";;
+const char duser02[] = "(sat-lat)\n"
+"\n";;
 const char duser03[] = "sfx-on";
 const char duser04[] = "sfx-set";
 const char duser05[] = "sfx-get";
 const char duser06[] = "note-sync";
-const char duser07[] = "sat-n";
+const char duser07[] = "(sat-on port)\n"
+"Turns on GPS serial using port.\n"
 
 // Built-in symbol lookup table
 const tbl_entry_t lookup_table[] = {
@@ -6426,9 +6441,9 @@ const tbl_entry_t lookup_table[] = {
   { string253, (fn_ptr_type)OUTPUT, PINMODE, NULL },
 
   // Extension table entries
-  { user00, fn_sattime, 0211, duser00 },
-  { user01, fn_satlong, 0201, duser01 },
-  { user02, fn_satlat, 0211, duser02 },
+  { user00, fn_sattime, 0200, duser00 },
+  { user01, fn_satlong, 0200, duser01 },
+  { user02, fn_satlat, 0200, duser02 },
   { user03, fn_sfxon, 0211, duser03 },
   { user04, fn_sfxset, 0200, duser04 },
   { user05, fn_sfxget, 0222, duser05 },
