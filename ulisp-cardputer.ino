@@ -2014,6 +2014,7 @@ float au_ff(int32_t in) {
 
 // Q para
 int32_t a_fq(float in) {
+  if(abs(in) < 0.0001) in = copysign(0.0001, in);// div zero and sensible Q
   return (int32_t)(1 / in * (1 << 16));
 }
 
@@ -2067,6 +2068,13 @@ enum sfxpara {
 
   A_FF, // filter frequency
   A_FQ, // filter Q
+
+  A_LL, // lowpass limit 
+  A_LD, // lowpass drift
+
+  A_T, // filter internal
+  A_TF, // filter internal
+  A_U, // filter internal
   
   A_MAX
   };
@@ -2080,6 +2088,9 @@ int32_t (*const a_map[A_MAX])(float in) = {
   a_tc, a_tc,
   a_am, a_am,
   a_ff, a_fq,
+  a_ff, a_tc,
+  a_lin, a_lin,
+  a_lin,
 };
 float (*const a_unmap[A_MAX])(int32_t in) = {
   au_lin,
@@ -2088,6 +2099,9 @@ float (*const a_unmap[A_MAX])(int32_t in) = {
   au_tc, au_tc,
   au_am, au_am,
   au_ff, au_fq,
+  au_ff, au_tc,
+  au_lin, au_lin,
+  au_lin,
 };
 
 // fixed point and truncate
@@ -2148,6 +2162,10 @@ void audio_task(void *para) {
         if(ap[A_FD] > 0) {
           ap[A_F] = lmul(ap[A_F] - ap[A_FL], ap[A_FD]) + ap[A_FL];
         } else ap[A_F] = lmul(ap[A_F], 1 - ap[A_FD]);
+        // filter decay or to limit
+        if(ap[A_LD] > 0) {
+          ap[A_FF] = lmul(ap[A_FF] - ap[A_LL], ap[A_FD]) + ap[A_LL];
+        } else ap[A_FF] = lmul(ap[A_FF], 1 - ap[A_LD]);
       }
     xSemaphoreGive(audio_mutex);
     // que and suspend if busy?

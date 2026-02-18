@@ -26,6 +26,10 @@ continuing on sequentially with the last register plus one being the next oscill
 | 08 | A_BB | Filter Buffer Band |  |  |
 | 09 | A_FF | Filter Frequency |  |  |
 | 10 | A_FQ | Filter Q Resonance |  |  |
-| 11 |  |  |  |  |
+| 11 | A_LL | Lowpass Envelope Limit |  |  |
+| 12 | A_LD | Lowpass Envelope Drift Time Constant |  |  |
+| 13 | A_T | Filter Internal 1 |  |  |
+| 14 | A_TF | Filter Internal 2 |  |  |
+| 15 | A_U | Filter Internal 3 |  |  |
 
 
