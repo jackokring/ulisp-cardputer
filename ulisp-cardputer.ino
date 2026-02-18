@@ -2115,18 +2115,10 @@ int16_t inline chop(int32_t a) {
 }
 
 // filter paste
-//obtain mapped control value
-
-    //TWO POLE FILTER
-  void setFK2(float fc, float q, float fs) {
-    t   = 1 / (1 + k * f);
-    tf  = t * f;
-    u   = 1 / (1 + tf * f);
-  }
 
 inline int32_t filter_step(int32_t in, int32_t *ap) {
-  int32_t low = lmul(ap[A_BL] + lmul(tf, ap[A_BB] + lmul(ap[A_FF], in)), u);
-  int32_t band = lmul(ap[A_BB] + lmul(ap[A_FF], in - low), t);
+  int32_t low = lmul(ap[A_BL] + lmul(ap[A_TF], ap[A_BB] + lmul(ap[A_FF], in)), ap[A_U]);
+  int32_t band = lmul(ap[A_BB] + lmul(ap[A_FF], in - low), ap[A_T]);
   int32_t high = in - low - lmul(ap[A_FQ], band);
   ap[A_BB] = band + lmul(ap[A_FF], high);
   ap[A_BB] = low  + lmul(ap[A_FF], band);
@@ -2146,17 +2138,20 @@ void audio_task(void *para) {
     }
     // calc
     while(xSemaphoreTake(audio_mutex, 1 / portTICK_PERIOD_MS) != pdTRUE);
-    for(int i = 0; i < blk_size; ++i)
+    for(int i = 0; i < blk_size; ++i) {
       blk[i] = 0;
-      for(int c = 0; c < CHAN_MAX; ++c){
+      for(int c = 0; c < CHAN_MAX; ++c) {
         auto ap = apara[c];
+        ap[A_T]   = (int64_t)(1 << 32) / ((1 << 16) + lmul(ap[A_FQ], ap[A_FF]));
+        ap[A_TF]  = lmul(ap[A_T], ap[A_FF]);
+        ap[A_U]   = (int64_t)(1 << 32) / ((1 << 16) + lmul(ap[A_TF], ap[A_FF]));
         // generator function
         blk[i] += chop(filter_step(lmul(ap[A_P], ap[A_A]), ap));
         // then increase phase
         ap[A_P] += ap[A_F];
         // amplitude decay or to limit
         if(ap[A_AD] > 0) {
-          ap[A_A] = lmul(apA_A] - ap[A_AL], ap[A_AD]) + ap[A_AL];
+          ap[A_A] = lmul(ap[A_A] - ap[A_AL], ap[A_AD]) + ap[A_AL];
         } else ap[A_A] = lmul(ap[A_A], 1 - ap[A_AD]);
         // frequency decay or to limit
         if(ap[A_FD] > 0) {
@@ -2167,6 +2162,7 @@ void audio_task(void *para) {
           ap[A_FF] = lmul(ap[A_FF] - ap[A_LL], ap[A_FD]) + ap[A_LL];
         } else ap[A_FF] = lmul(ap[A_FF], 1 - ap[A_LD]);
       }
+    }
     xSemaphoreGive(audio_mutex);
     // que and suspend if busy?
     while(M5Cardputer.Speaker.isPlaying(7) > 1) {
@@ -2180,14 +2176,14 @@ void audio_set(int para, float val) {// priority given to generate task as slopp
   int32_t t = a_map[para % A_MAX](val);
   while(xSemaphoreTake(audio_mutex, 10 / portTICK_PERIOD_MS) != pdTRUE);
   // set audio parameter
-  apara[para] = t;
+  apara[para / A_MAX % CHAN_MAX][para % A_MAX] = t;
   xSemaphoreGive(audio_mutex);
 }
 
 int audio_get(int para) {// priority given to generate task as sloppy tweeking OK.
   while(xSemaphoreTake(audio_mutex, 10 / portTICK_PERIOD_MS) != pdTRUE);
   // get audio parameter
-  int val = apara[para];
+  int val = apara[para / A_MAX % CHAN_MAX][para % A_MAX];
   xSemaphoreGive(audio_mutex);
   return a_unmap[para % A_MAX](val);
 }
