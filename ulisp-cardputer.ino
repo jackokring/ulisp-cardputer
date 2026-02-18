@@ -2070,6 +2070,48 @@ int16_t inline chop(int32_t a) {
   return (int16_t)(a >> 16);
 }
 
+// filter paste
+//obtain mapped control value
+    float log(float val, float centre) {
+        return powf(2.f, val) * centre;
+    }
+
+  float dBMid(float val) {
+    return powf(2.f, val)-powf(2.f, -val);
+  }
+
+    float qk(float val) {
+        float v = log(val, 1.f);
+        return 1 / v;//return k from Q
+    }
+
+  float f, t, u, k, tf, bl[PORT_MAX_CHANNELS], bb[PORT_MAX_CHANNELS];
+
+    /* 2P
+           Ghigh * s^2 + Gband * s + Glow
+    H(s) = ------------------------------
+                 s^2 + k * s + 1
+     */
+    //TWO POLE FILTER
+  void setFK2(float fc, float q, float fs) {
+    //f   = tanf(M_PI * fc / fs);
+    f = tanpif(fc / fs);
+    k   = qk(q);
+    t   = 1 / (1 + k * f);
+    u   = 1 / (1 + t * f * f);
+    tf  = t * f;
+  }
+
+  float process2(float in, int p) {
+    float low = (bl[p] + tf * (bb[p] + f * in)) * u;
+    float band = (bb[p] + f * (in - low)) * t;
+    float high = in - low - k * band;
+    bb[p] = band + f * high;
+    bl[p] = low  + f * band;
+    return low;//lpf default
+  }
+
+
 void audio_task(void *para) {
   // 33 ms?
 #define blk_size 256
