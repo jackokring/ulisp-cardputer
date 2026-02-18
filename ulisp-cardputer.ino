@@ -1986,6 +1986,7 @@ SemaphoreHandle_t audio_mutex = NULL;
 StaticSemaphore_t mutex_buf;
 #define SAMPLE_RATE 22050
 #define SAMPLE_TIME (1.0f / SAMPLE_RATE) 
+#define CHAN_MAX 3
 
 float clamp(float in) { return fmax(-1.0f, fmin(1.0f, in)); }
 
@@ -1993,12 +1994,31 @@ float clamp(float in) { return fmax(-1.0f, fmin(1.0f, in)); }
 
 // frequency para
 int32_t a_fr(float in) {
-  return a_lin(SAMPLE_TIME * in);
+  return a_lin(SAMPLE_TIME * in * 2.0f);
 }
 
 float au_fr(int32_t in) {
   float t = au_lin(in);
+  return t * SAMPLE_RATE * 0.5f;
+}
+
+// filter frequency
+int32_t a_ff(float in) {
+  return (int32_t)(clamp(tanf(M_PI * SAMPLE_TIME * in)) * (1 << 16));// fixed point
+}
+
+float au_ff(int32_t in) {
+  float t = atanf((float)in / (1 << 16)) / M_PI;
   return t * SAMPLE_RATE;
+}
+
+// Q para
+int32_t a_fq(float in) {
+  return (int32_t)(1 / in * (1 << 16));
+}
+
+float au_fq(int32_t in) {
+  return 1 / (float)in / (1 << 16);
 }
 
 // amplitude para
@@ -2022,12 +2042,12 @@ float au_lin(int32_t in) {
 
 // time constant para
 int32_t a_tc(float in) {
-  return a_lin(copysign(1.0f - expf(SAMPLE_RATE * fabs(in)), in));
+  return a_lin(copysign(1.0f - expf(SAMPLE_RATE * fabs(in * 0.001)), in));//ms
 }
 
 float au_tc(int32_t in) {
   float t = au_lin(in);
-  return copysign(SAMPLE_TIME * logf(1.0f - fabs(t)), t);
+  return copysign(SAMPLE_TIME * logf(1.0f - fabs(t)) * 1000.0, t);//ms
 }
 
 enum sfxpara {  
@@ -2041,23 +2061,33 @@ enum sfxpara {
   
   A_FD, // frequency drift
   A_AD, // amplitude drift
+
+  A_BL, // filter buffer low
+  A_BB, // filter buffer band
+
+  A_FF, // filter frequency
+  A_FQ, // filter Q
   
   A_MAX
   };
 
-int32_t apara[A_MAX] = { 0 };
+int32_t apara[CHAN_MAX][A_MAX] = { { 0 } };
 
 int32_t (*const a_map[A_MAX])(float in) = {
   a_lin,
   a_fr, a_am,
   a_fr, a_am,
   a_tc, a_tc,
+  a_am, a_am,
+  a_ff, a_fq,
 };
 float (*const a_unmap[A_MAX])(int32_t in) = {
   au_lin,
   au_fr, au_am,
   au_fr, au_am,
   au_tc, au_tc,
+  au_am, au_am,
+  au_ff, au_fq,
 };
 
 // fixed point and truncate
@@ -2072,45 +2102,22 @@ int16_t inline chop(int32_t a) {
 
 // filter paste
 //obtain mapped control value
-    float log(float val, float centre) {
-        return powf(2.f, val) * centre;
-    }
 
-  float dBMid(float val) {
-    return powf(2.f, val)-powf(2.f, -val);
-  }
-
-    float qk(float val) {
-        float v = log(val, 1.f);
-        return 1 / v;//return k from Q
-    }
-
-  float f, t, u, k, tf, bl[PORT_MAX_CHANNELS], bb[PORT_MAX_CHANNELS];
-
-    /* 2P
-           Ghigh * s^2 + Gband * s + Glow
-    H(s) = ------------------------------
-                 s^2 + k * s + 1
-     */
     //TWO POLE FILTER
   void setFK2(float fc, float q, float fs) {
-    //f   = tanf(M_PI * fc / fs);
-    f = tanpif(fc / fs);
-    k   = qk(q);
     t   = 1 / (1 + k * f);
-    u   = 1 / (1 + t * f * f);
     tf  = t * f;
+    u   = 1 / (1 + tf * f);
   }
 
-  float process2(float in, int p) {
-    float low = (bl[p] + tf * (bb[p] + f * in)) * u;
-    float band = (bb[p] + f * (in - low)) * t;
-    float high = in - low - k * band;
-    bb[p] = band + f * high;
-    bl[p] = low  + f * band;
-    return low;//lpf default
-  }
-
+inline int32_t filter_step(int32_t in, int32_t *ap) {
+  int32_t low = lmul(ap[A_BL] + lmul(tf, ap[A_BB] + lmul(ap[A_FF], in)), u);
+  int32_t band = lmul(ap[A_BB] + lmul(ap[A_FF], in - low), t);
+  int32_t high = in - low - lmul(ap[A_FQ], band);
+  ap[A_BB] = band + lmul(ap[A_FF], high);
+  ap[A_BB] = low  + lmul(ap[A_FF], band);
+  return low;//lpf default
+}
 
 void audio_task(void *para) {
   // 33 ms?
@@ -2125,20 +2132,23 @@ void audio_task(void *para) {
     }
     // calc
     while(xSemaphoreTake(audio_mutex, 1 / portTICK_PERIOD_MS) != pdTRUE);
-    for(int i = 0; i < blk_size; ++i) {
-      // generator function
-      blk[i] = chop(lmul(apara[A_P], apara[A_A]));
-      // then increase phase
-      apara[A_P] += apara[A_F];
-      // amplitude decay or to limit
-      if(apara[A_AD] > 0) {
-        apara[A_A] = lmul(apara[A_A] - apara[A_AL], apara[A_AD]) + apara[A_AL];
-      } else apara[A_A] = lmul(apara[A_A], 1 - apara[A_AD]);
-      // frequency decay or to limit
-      if(apara[A_FD] > 0) {
-        apara[A_F] = lmul(apara[A_F] - apara[A_FL], apara[A_FD]) + apara[A_FL];
-      } else apara[A_F] = lmul(apara[A_F], 1 - apara[A_FD]);
-    }
+    for(int i = 0; i < blk_size; ++i)
+      blk[i] = 0;
+      for(int c = 0; c < CHAN_MAX; ++c){
+        auto ap = apara[c];
+        // generator function
+        blk[i] += chop(filter_step(lmul(ap[A_P], ap[A_A]), ap));
+        // then increase phase
+        ap[A_P] += ap[A_F];
+        // amplitude decay or to limit
+        if(ap[A_AD] > 0) {
+          ap[A_A] = lmul(apA_A] - ap[A_AL], ap[A_AD]) + ap[A_AL];
+        } else ap[A_A] = lmul(ap[A_A], 1 - ap[A_AD]);
+        // frequency decay or to limit
+        if(ap[A_FD] > 0) {
+          ap[A_F] = lmul(ap[A_F] - ap[A_FL], ap[A_FD]) + ap[A_FL];
+        } else ap[A_F] = lmul(ap[A_F], 1 - ap[A_FD]);
+      }
     xSemaphoreGive(audio_mutex);
     // que and suspend if busy?
     while(M5Cardputer.Speaker.isPlaying(7) > 1) {
