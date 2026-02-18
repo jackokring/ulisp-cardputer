@@ -5343,27 +5343,33 @@ object *fn_savebmp (object *args, object *env) {
 
 object *fn_sattime (object *args, object *env) {
   (void) env;
-  object *time = cons(number(gps_data.time.centisecond()), nil);
-  time = cons(number(gps_data.time.second()), time);
-  time = cons(number(gps_data.time.minute()), time);
-  time = cons(number(gps_data.time.hour()), time);
+  object *time = nil;
+  if(gps_data.time.isValid()) {
+    time = cons(number(gps_data.time.centisecond()), nil);
+    time = cons(number(gps_data.time.second()), time);
+    time = cons(number(gps_data.time.minute()), time);
+    time = cons(number(gps_data.time.hour()), time);
+  }
   //date
-  time = cons(number(gps_data.date.day()), time);
-  time = cons(number(gps_data.date.month()), time);
-  time = cons(number(gps_data.date.year()), time);
-  return time;
+  object *date = nil;
+  if(gps_data.date.isValid()) {
+    date = cons(number(gps_data.date.day()), nil);
+    date = cons(number(gps_data.date.month()), date);
+    date = cons(number(gps_data.date.year()), date);
+  }
+  return cons(date, time);
 }
 
 #define second(x)          first(rest(x))
 
 object *fn_satlong (object *args, object *env) {
   (void) env;
-  return number(gps_data.location.lng());
+  return gps_data.location.isValid() ? number(gps_data.location.lng()) : nil;
 }
 
 object *fn_satlat (object *args, object *env) {
   (void) env;
-  return number(gps_data.location.lat());
+  return gps_data.location.isValid() ? number(gps_data.location.lat()) : nil;
 }
 
 object *fn_sfxon (object *args, object *env) {
@@ -6238,11 +6244,11 @@ const char doc246[] = "(save-bmp filename)\n"
 
 // Extension docs
 const char duser00[] = "(sat-time)\n"
-"Returns (y m d h m s f) in UTC.\n";
+"Returns ((y m d) (h m s 100th)) in UTC. Parts are nil if there is no update.\n";
 const char duser01[] = "(sat-long)\n"
-"Returns the longitude.\n";
+"Returns the longitude or nil if no update.\n";
 const char duser02[] = "(sat-lat)\n"
-"Returns the latitude.\n";
+"Returns the latitude or nil if no update.\n";
 const char duser03[] = "sfx-on";
 const char duser04[] = "sfx-set";
 const char duser05[] = "sfx-get";
