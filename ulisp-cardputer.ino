@@ -3050,8 +3050,10 @@ object *sp_withserial (object *args, object *env) {
 }
 
 object *sp_withi2c (object *args, object *env) {
-  M5.In_I2C.release();
-  M5.In_I2C.begin(I2C_NUM_1, 8, 9);// wire1 the M5Unified documentation is unclear if I2C1 is used internally
+  if(M5.getBoard() == m5::board_t::board_M5CardputerADV) {
+    M5.In_I2C.release();
+    M5.In_I2C.begin(I2C_NUM_1, 8, 9);// wire1 the M5Unified documentation is unclear if I2C1 is used internally
+  }
   object *params = checkarguments(args, 2, 4);
   object *var = first(params);
   int address = checkinteger(eval(second(params), env));
@@ -3072,7 +3074,7 @@ object *sp_withi2c (object *args, object *env) {
   #if ULISP_HOWMANYI2C == 2
   if (address > 127 && M5.getBoard() == m5::board_t::board_M5CardputerADV) {
     port = &Wire1;
-    I2Cinit(port, 8, 9, 1); // internal Pullups - ADV keyboard - reinit
+    I2Cinit(port, 8, 9, 0); // internal Pullups - ADV keyboard - reinit
     // the rational is that reintialization is safe, it sets
     // the same state as the M5.In_I2C used by the keyboard
     // it's not multi thread safe, but as port 0 is guessed (silicon I2C used)
@@ -3081,7 +3083,7 @@ object *sp_withi2c (object *args, object *env) {
   #else
   {
     if(serial_to_i2c()) return nil;// grove the i2c
-    I2Cinit(port, 2, 1, 1); // grove Pullups - reinit?
+    I2Cinit(port, 2, 1, 0); // grove Pullups - reinit?
   }
   #endif
   object *pair = cons(var, (I2Cstart(port, address & 0x7F, read)) ? stream(I2CSTREAM, address) : nil);
