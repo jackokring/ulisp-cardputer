@@ -1986,7 +1986,8 @@ SemaphoreHandle_t audio_mutex = NULL;
 StaticSemaphore_t mutex_buf;
 #define SAMPLE_RATE 22050
 #define SAMPLE_TIME (1.0f / SAMPLE_RATE) 
-#define CHAN_MAX 3
+// goes upto 10
+#define CHAN_MAX 4
 
 float clamp(float in) { return fmax(-1.0f, fmin(1.0f, in)); }
 
@@ -3049,6 +3050,8 @@ object *sp_withserial (object *args, object *env) {
 }
 
 object *sp_withi2c (object *args, object *env) {
+  M5.In_I2C.release();
+  M5.In_I2C.begin(I2C_NUM_1, 8, 9);// wire1 the M5Unified documentation is unclear if I2C1 is used internally
   object *params = checkarguments(args, 2, 4);
   object *var = first(params);
   int address = checkinteger(eval(second(params), env));
@@ -3069,12 +3072,16 @@ object *sp_withi2c (object *args, object *env) {
   #if ULISP_HOWMANYI2C == 2
   if (address > 127 && M5.getBoard() == m5::board_t::board_M5CardputerADV) {
     port = &Wire1;
-    // I2Cinit(port, 8, 9, 1); // internal Pullups - ADV keyboard no reinit
+    I2Cinit(port, 8, 9, 1); // internal Pullups - ADV keyboard - reinit
+    // the rational is that reintialization is safe, it sets
+    // the same state as the M5.In_I2C used by the keyboard
+    // it's not multi thread safe, but as port 0 is guessed (silicon I2C used)
+    // on least Wire interference
   } else
   #else
   {
     if(serial_to_i2c()) return nil;// grove the i2c
-    I2Cinit(port, 2, 1, 1); // grove Pullups -reinit?
+    I2Cinit(port, 2, 1, 1); // grove Pullups - reinit?
   }
   #endif
   object *pair = cons(var, (I2Cstart(port, address & 0x7F, read)) ? stream(I2CSTREAM, address) : nil);
