@@ -2197,6 +2197,31 @@ void audio_on(bool on) {
 }
 #endif
 
+#include <UNIT_8ENCODER.h>
+
+UNIT_8ENCODER encoder;
+
+bool encoder8(bool adv) {// true return for error
+  if(M5.getBoard() == m5::board_t::board_M5CardputerADV) {
+    M5.In_I2C.release();
+    M5.In_I2C.begin(I2C_NUM_1, 8, 9);// wire1 the M5Unified documentation is unclear if I2C1 is used internally
+  } else {
+    if(adv) return true;
+  }
+  TwoWire *port = &Wire;
+  #if ULISP_HOWMANYI2C == 2
+  if (M5.getBoard() == m5::board_t::board_M5CardputerADV && adv) {
+    port = &Wire1;
+    encoder.begin(port, ENCODER_ADDR, 8, 9); // internal Pullups - ADV keyboard - reinit
+  } else
+  #endif
+  {
+    if(serial_to_i2c()) return nil;// grove the i2c
+    encoder.begin(port, ENCODER_ADDR, 2, 1); // grove Pullups - reinit?
+  }
+  return false;
+}
+
 // apparently the 437-ish font is off at 0xb2
 const char xtra[32] PROGMEM = {// and a selct 32
   0xe5, 0xe9, 0xe2, 0xe4, // Mu, Ohm, pi, sigma
@@ -2297,31 +2322,33 @@ bool serial_not_i2c() {// true on error
   return false;
 }
 
-void gpsbegin(bool adv) {
+bool gpsbegin(bool adv) {// return true for error
   if(gps_on) {
     if((gps_serial == &Serial1) ^ adv) {
       error2("firmware IO GPS lock");
     }
-    return;// already done or fail
+    return true;// already done or fail
   }
-  if(adv) {
+  if(adv && M5.getBoard() == m5::board_t::board_M5CardputerADV) {
     if(adv_io_on) {
       error2("firmware IO pin lock");
-      return;
+      return true;
     }
     gps_serial == &Serial2;
     Serial2.begin(9600, SERIAL_8N1, 13, 15);//advance independant on 2
     // TX not used?
     serial_2_on = true;//block pins
   } else {
+    if(adv) return true;
     if(serial_i2c_locked) {
       error2("firmware IO serial or i2c lock");
-      return;
+      return true;
     }
     gps_serial == &Serial1;
     Serial1.begin(9600, SERIAL_8N1, 2, 1);
   }
   gps_on = true;
+  return false;
 }
 
 bool serialbegin (int address, int baud) {// true on error
@@ -3080,12 +3107,11 @@ object *sp_withi2c (object *args, object *env) {
     // it's not multi thread safe, but as port 0 is guessed (silicon I2C used)
     // on least Wire interference
   } else
-  #else
+  #endif
   {
     if(serial_to_i2c()) return nil;// grove the i2c
     I2Cinit(port, 2, 1, 0); // grove Pullups - reinit?
   }
-  #endif
   object *pair = cons(var, (I2Cstart(port, address & 0x7F, read)) ? stream(I2CSTREAM, address) : nil);
   push(pair,env);
   object *forms = cdr(args);
@@ -5415,10 +5441,25 @@ object *fn_saton (object *args, object *env) {
   (void) env;
   int add = checkinteger(first(args));
   if(add == 0) {
-    gpsbegin(false);
+    if(gpsbegin(false)) return nil;
     return tee;
   } else if(add == 1) {
-    gpsbegin(true);
+    if(gpsbegin(true)) return nil;
+    return tee;
+  } else {
+    error("port not supported", number(add));
+    return nil;
+  }
+}
+
+object *fn_encode8 (object *args, object *env) {
+  (void) env;
+  int add = checkinteger(first(args));
+  if(add == 0) {
+    if(encoder8(false)) return nil;
+    return tee;
+  } else if(add == 1) {
+    if(encoder8(true)) return nil;
     return tee;
   } else {
     error("port not supported", number(add));
@@ -5691,6 +5732,7 @@ const char user04[] = "sfx-set";
 const char user05[] = "sfx-get";
 const char user06[] = "note-sync";
 const char user07[] = "sat-on";
+const char user08[] = "encode8";
 
 // Documentation strings
 const char doc0[] = "nil\n"
@@ -6278,6 +6320,8 @@ const char duser05[] = "sfx-get";
 const char duser06[] = "note-sync";
 const char duser07[] = "(sat-on port)\n"
 "Turns on GPS serial using port.\n";
+const char duser08[] = "(encode8 port)\n"
+"Enable i2c for the unit 8encoder on port.\n";
 
 // Built-in symbol lookup table
 const tbl_entry_t lookup_table[] = {
@@ -6545,6 +6589,7 @@ const tbl_entry_t lookup_table[] = {
   { user05, fn_sfxget, 0222, duser05 },
   { user06, fn_notesync, 0211, duser06 },
   { user07, fn_saton, 0211, duser07 },
+  { user08, fn_encode8, 0211, duser08 },
 };
 
 #if !defined(extensions)

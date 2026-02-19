@@ -84,6 +84,7 @@ was chosen.
 - [X] Y Combinator - got to have it for lambda recusion programming pattern completeness.
 - [X] Highlighting and Theme Files - for nicer editing of the `LispLibrary.h`.
 - [ ] Optimise Language File - **error** features not present in **uLisp** as it's a derivation of a common lisp language file, by style or splitting contexts. 
+- [ ] Unit 8 Encoder Support - functions for easy access.
 
 ## Other M5Cardputer Projects
 

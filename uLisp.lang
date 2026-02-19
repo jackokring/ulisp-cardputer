@@ -351,6 +351,7 @@
       <keyword>dolist</keyword>
       <keyword>dotimes</keyword>
       <keyword>edit</keyword>
+      <keyword>encode8</keyword>
       <keyword>eq</keyword>
       <keyword>equal</keyword>
       <keyword>error</keyword>
