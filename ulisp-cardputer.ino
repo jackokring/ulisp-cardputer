@@ -2202,12 +2202,6 @@ void audio_on(bool on) {
 UNIT_8ENCODER encoder;
 
 bool encoder8(bool adv) {// true return for error
-  if(M5.getBoard() == m5::board_t::board_M5CardputerADV) {
-    M5.In_I2C.release();
-    M5.In_I2C.begin(I2C_NUM_1, 8, 9);// wire1 the M5Unified documentation is unclear if I2C1 is used internally
-  } else {
-    if(adv) return true;
-  }
   TwoWire *port = &Wire;
   #if ULISP_HOWMANYI2C == 2
   if (M5.getBoard() == m5::board_t::board_M5CardputerADV && adv) {
@@ -2216,7 +2210,7 @@ bool encoder8(bool adv) {// true return for error
   } else
   #endif
   {
-    if(serial_to_i2c()) return nil;// grove the i2c
+    if(serial_to_i2c()) return true;// grove the i2c
     encoder.begin(port, ENCODER_ADDR, 2, 1); // grove Pullups - reinit?
   }
   return false;
@@ -3077,10 +3071,6 @@ object *sp_withserial (object *args, object *env) {
 }
 
 object *sp_withi2c (object *args, object *env) {
-  if(M5.getBoard() == m5::board_t::board_M5CardputerADV) {
-    M5.In_I2C.release();
-    M5.In_I2C.begin(I2C_NUM_1, 8, 9);// wire1 the M5Unified documentation is unclear if I2C1 is used internally
-  }
   object *params = checkarguments(args, 2, 4);
   object *var = first(params);
   int address = checkinteger(eval(second(params), env));
